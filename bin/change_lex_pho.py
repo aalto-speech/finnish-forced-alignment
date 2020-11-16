@@ -26,7 +26,7 @@ def main(corpus_file, phone_map_file):
 	for word in words_more_than_n:
 		line = word
 		line = unicodedata.normalize(u'NFC', line)
-		if line.isdecimal() or line[1:].isdecimal() or line[:-1].isdecimal() or line[1:-1].isdecimal():
+		if line.isdecimal() or line[1:].isdecimal() or line[:-1].isdecimal() or line[1:-1].isdecimal() or line[0] == '<' or line[0] == '!':
 			continue
 		dictionary_more_than_n.write(line)
 		for letter in line:
