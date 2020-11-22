@@ -58,7 +58,7 @@ y
 {
 EOF
 
-python3 make_wav_and_utt2spk.py
+python3 bin/make_wav_and_utt2spk.py
 utils/utt2spk_to_spk2utt.pl data/align/utt2spk > data/align/spk2utt
 tr '[:upper:]' '[:lower:]' < data/src/txts/text > data/align/text
 sed -i 's/!sil/!SIL/g' data/align/text
@@ -66,7 +66,7 @@ sed -i 's/<unk>/<UNK>/g' data/align/text
 
 cut -f 2- -d ' ' data/align/text > corpus
 
-python3 change_lex_pho.py corpus $csv_file
+python3 bin/change_lex_pho.py corpus bin/$csv_file
 mv lexicon.txt data/dict
 
 extra=3
