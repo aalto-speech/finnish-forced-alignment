@@ -11,9 +11,9 @@ RUN mkdir -p conf
 
 # Loading the helper scripts
 RUN git clone https://github.com/juholeinonen/aligning_with_Docker.git
-RUN cd aligning_with_Docker
-RUN git reset --hard fdc222b
-RUN cd ..
+WORKDIR aligning_with_Docker
+RUN git reset --hard 62eb450
+WORKDIR /opt/kaldi/egs/align
 
 # Copying file by file for sake of transparency the DNN
 COPY exp/nnet3/chain/cmvn_opts exp/nnet3/chain/cmvn_opts
