@@ -12,7 +12,7 @@ RUN mkdir -p conf
 # Loading the helper scripts
 RUN git clone https://github.com/juholeinonen/aligning_with_Docker.git
 WORKDIR aligning_with_Docker
-RUN git reset --hard 62eb450
+RUN git reset --hard 2903907
 WORKDIR /opt/kaldi/egs/align
 
 # Copying file by file for sake of transparency the DNN
@@ -31,4 +31,4 @@ COPY exp/nnet3/extractor/splice_opts exp/nnet3/extractor/splice_opts
 
 COPY conf/mfcc_hires.conf conf/mfcc_hires.conf
 
-ENTRYPOINT ["./align_from_scratch.sh"]
+ENTRYPOINT ["./aligning_with_Docker/bin/align_from_scratch.sh"]
