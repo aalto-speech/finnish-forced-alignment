@@ -31,7 +31,7 @@ def main(corpus_file, phone_map_file):
 		dictionary_more_than_n.write(line)
 		for letter in line:
                     if letter not in ('+', '!', '"', '(', ')', ',', '-', '.', ':', '?', '_', '‑', '—'):
-				dictionary_more_than_n.write(u" " + phone_map[letter])
+                        dictionary_more_than_n.write(u" " + phone_map[letter])
 		dictionary_more_than_n.write(u"\n")
 	
 	dictionary_more_than_n.close()
