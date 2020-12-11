@@ -61,7 +61,7 @@ EOF
 
 python3 $bin_folder/make_wav_and_utt2spk.py
 utils/utt2spk_to_spk2utt.pl data/align/utt2spk > data/align/spk2utt
-tr '[:upper:]' '[:lower:]' < data/src/txts/text > data/align/text
+cp data/src/txts/text data/align/text
 sed -i 's/!sil/!SIL/g' data/align/text
 sed -i 's/<unk>/<UNK>/g' data/align/text
 
