@@ -1,6 +1,6 @@
 def wer(ref, hyp, debug=False):
-    r = ref.split()
-    h = hyp.split()
+    r = ref
+    h = hyp
     # costs will holds the costs, like in the Levenshtein distance algorithm
     costs = [[0 for _ in range(len(h) + 1)] for _ in range(len(r) + 1)]
     # backtrace will hold the operations we've done.
