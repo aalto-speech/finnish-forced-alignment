@@ -153,13 +153,20 @@ def calculate_statistics(ctm_mistakes_seconds):
     # Median start difference
     start_difference_median = np.median(ctm_mistakes_seconds[:, 0])
 
-    # What percentage of tokens are inside 40ms of actual start
-    percentileofscore_of_40ms_start = percentileofscore(np.abs(ctm_mistakes_seconds[:, 0]), 0.04)
+    list_of_percentileofscores = []
+    # What percentage of tokens are inside 10ms, 25ms, 50ms, 100ms of actual start
+    list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 0]), 0.01))
+    list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 0]), 0.025))
+    list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 0]), 0.05))
+    list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 0]), 0.1))
 
-    # What percentage of tokens are inside 40ms of actual end
-    percentileofscore_of_40ms_end = percentileofscore(np.abs(ctm_mistakes_seconds[:, 1]), 0.04)
+    # What percentage of tokens are inside 10ms, 25ms, 50ms, 100ms of actual end
+    list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 1]), 0.01))
+    list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 1]), 0.025))
+    list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 1]), 0.05))
+    list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 1]), 0.1))
 
-    return start_difference_median, percentileofscore_of_40ms_start, percentileofscore_of_40ms_end
+    return start_difference_median, list_of_percentileofscores
 
 
 def main(gold_ctms_file, created_ctms_file, name):
