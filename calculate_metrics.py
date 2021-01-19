@@ -180,10 +180,10 @@ def main(gold_ctms_file, created_ctms_file, name):
 
     nparray_ctm_mistakes_seconds = np.asarray(ctm_mistakes_seconds)
     name_of_histogram_start = name + "_histogram_start.png"
-    draw_histogram(nparray_ctm_mistakes_seconds[:, 0], "Start difference", "# tokens", "Histogram of start differences", 0.03, name_of_histogram_start)
+    draw_histogram(nparray_ctm_mistakes_seconds[:, 0], "Start difference", "# tokens", "Histogram of start differences", 0.5, name_of_histogram_start)
 
     name_of_histogram_end = name + "_histogram_end.png"
-    draw_histogram(nparray_ctm_mistakes_seconds[:, 1], "End difference", "# tokens", "Histogram of end differences", 0.03, name_of_histogram_end)
+    draw_histogram(nparray_ctm_mistakes_seconds[:, 1], "End difference", "# tokens", "Histogram of end differences", 0.5, name_of_histogram_end)
 
     statistics = calculate_statistics(nparray_ctm_mistakes_seconds)
     print(statistics)
