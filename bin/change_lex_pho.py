@@ -22,7 +22,7 @@ def main(corpus_file, phone_map_file):
     dictionary_more_than_n = open(dic_name, "w",encoding='utf-8')
     dictionary_more_than_n.write(u"!SIL SIL\n")
     dictionary_more_than_n.write(u"<UNK> SPN\n")
-    odd_characters = ['+', '!', '"', '(', ')', ',', '-', '.', ':', '?', '_', '‑', '—', "'", '=', "[", "]", "¤"]
+    odd_characters = ['+', '!', '"', '(', ')', ',', '-', '.', ':', '?', '_', '‑', '—', "'", '=', "[", "]", "¤", "§"]
     for word in words_more_than_n:
         line = word
         line = unicodedata.normalize(u'NFC', line)
