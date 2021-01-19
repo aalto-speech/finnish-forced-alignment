@@ -151,7 +151,8 @@ def draw_whiskers_plot(frame_wise_data, name_of_whiskers_plot):
 
 def calculate_statistics(ctm_mistakes_seconds):
     # Median start difference
-    start_difference_median = np.median(ctm_mistakes_seconds[:, 0])
+    start_difference_median = np.median(np.abs(ctm_mistakes_seconds[:, 0]))
+    end_difference_median = np.median(np.abs(ctm_mistakes_seconds[:, 1]))
 
     list_of_percentileofscores = []
     # What percentage of tokens are inside 10ms, 25ms, 50ms, 100ms of actual start
