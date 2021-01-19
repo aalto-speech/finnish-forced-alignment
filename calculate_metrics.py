@@ -167,7 +167,7 @@ def calculate_statistics(ctm_mistakes_seconds):
     list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 1]), 0.05))
     list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 1]), 0.1))
 
-    return start_difference_median, list_of_percentileofscores
+    return start_difference_median, end_difference_median, list_of_percentileofscores
 
 
 def main(gold_ctms_file, created_ctms_file, name):
