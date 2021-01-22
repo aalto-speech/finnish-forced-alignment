@@ -151,7 +151,8 @@ def draw_whiskers_plot(frame_wise_data, name_of_whiskers_plot):
 
 def calculate_statistics(ctm_mistakes_seconds):
     # Median start difference
-    start_difference_median = np.median(ctm_mistakes_seconds[:, 0])
+    start_difference_median = np.median(np.abs(ctm_mistakes_seconds[:, 0]))
+    end_difference_median = np.median(np.abs(ctm_mistakes_seconds[:, 1]))
 
     list_of_percentileofscores = []
     # What percentage of tokens are inside 10ms, 25ms, 50ms, 100ms of actual start
@@ -166,7 +167,7 @@ def calculate_statistics(ctm_mistakes_seconds):
     list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 1]), 0.05))
     list_of_percentileofscores.append(percentileofscore(np.abs(ctm_mistakes_seconds[:, 1]), 0.1))
 
-    return start_difference_median, list_of_percentileofscores
+    return start_difference_median, end_difference_median, list_of_percentileofscores
 
 
 def main(gold_ctms_file, created_ctms_file, name):
@@ -179,10 +180,10 @@ def main(gold_ctms_file, created_ctms_file, name):
 
     nparray_ctm_mistakes_seconds = np.asarray(ctm_mistakes_seconds)
     name_of_histogram_start = name + "_histogram_start.png"
-    draw_histogram(nparray_ctm_mistakes_seconds[:, 0], "Start difference", "# tokens", "Histogram of start differences", 0.03, name_of_histogram_start)
+    draw_histogram(nparray_ctm_mistakes_seconds[:, 0], "Start difference", "# tokens", "Histogram of start differences", 0.5, name_of_histogram_start)
 
     name_of_histogram_end = name + "_histogram_end.png"
-    draw_histogram(nparray_ctm_mistakes_seconds[:, 1], "End difference", "# tokens", "Histogram of end differences", 0.03, name_of_histogram_end)
+    draw_histogram(nparray_ctm_mistakes_seconds[:, 1], "End difference", "# tokens", "Histogram of end differences", 0.5, name_of_histogram_end)
 
     statistics = calculate_statistics(nparray_ctm_mistakes_seconds)
     print(statistics)
