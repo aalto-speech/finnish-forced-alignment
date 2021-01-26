@@ -51,6 +51,16 @@ def calculate_frame_wise_comparison(gold_ctms_df, created_ctms_df):
     # Iterate file by file
     list_of_filenames = gold_ctms_df["Filename"].unique().tolist()
 
+    # Check that all files are accounted for
+    list_of_created_filenames = created_ctms_df["Filename"].unique().tolist()
+    if len(list_of_filenames) != len(list_of_created_filenames):
+        print("length of gold df is {}, created {}".format(len(list_of_filenames), len(list_of_created_filenames)))
+        print("There is a different amount of files")
+        print("The following Filenames are not in created df")
+        print(set(list_of_filenames) - set(list_of_created_filenames))
+        print("The following Filenames are not in gold df")
+        print(set(list_of_created_filenames) - set(list_of_filenames))
+
     # Create dataframe with index every framerate (10ms) and initialize with silence
     for filename in list_of_filenames:
         correct_empty_frames = 0
@@ -128,13 +138,14 @@ def calculate_ctm_mistakes(gold_ctms_df, created_ctms_df):
 
 
 def draw_histogram(data, xlabel, ylabel, title, xlim, name_of_histogram):
-    plt.hist(data, 100, facecolor='g', alpha=0.75)
+    plt.hist(data, bins=200, facecolor='g', alpha=0.75)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
     plt.xlim(-xlim, xlim)
     plt.grid(True)
     plt.savefig(name_of_histogram, bbox_inches='tight')
+    plt.clf()
 
 
 def draw_whiskers_plot(frame_wise_data, name_of_whiskers_plot):
