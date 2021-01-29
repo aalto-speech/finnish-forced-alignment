@@ -1,13 +1,15 @@
 #!/bin/bash
 # align will be copied from outside
 
-if [ $# != 1 ]; then
+if [ $# != 2 ]; then
 
   echo "You're doing this wrong"
   exit 1;
 fi
 
 csv_file=$1
+datadir_ready=$2
+
 bin_folder=aligning_with_Docker/bin
 
 ln -s ../wsj/s5/utils utils
@@ -59,9 +61,15 @@ y
 {
 EOF
 
-python3 $bin_folder/make_wav_and_utt2spk.py
-utils/utt2spk_to_spk2utt.pl data/align/utt2spk > data/align/spk2utt
-cp data/src/txts/text data/align/text
+if [ "$datadir_ready" = false ]
+then
+  python3 $bin_folder/make_wav_and_utt2spk.py
+  utils/utt2spk_to_spk2utt.pl data/align/utt2spk > data/align/spk2utt
+  cp data/src/txts/text data/align/text
+else
+  cp data/src/align/* data/align/
+fi
+
 sed -i 's/!sil/!SIL/g' data/align/text
 sed -i 's/<unk>/<UNK>/g' data/align/text
 
