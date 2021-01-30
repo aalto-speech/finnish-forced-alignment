@@ -101,5 +101,7 @@ steps/online/nnet2/extract_ivectors_online.sh --cmd "run.pl" --nj $nj data/align
 steps/nnet3/align.sh --nj 1 --use_gpu false --online_ivector_dir exp/nnet3/ivectors_align_hires data/align_hires/ data/lang/ exp/nnet3/chain/ exp/align_ali
 
 steps/get_train_ctm.sh data/align_hires data/lang exp/align_ali
-cp exp/align_ali/ctm.1.gz data/src/txts/"$(date +"%Y_%m_%d_%I_%M_%p")_ctm".gz
+ctm_folder_name="$(date +"%Y_%m_%d_%I_%M_%p")_ctm"
+mkdir data/src/txts/"$ctm_folder_name"
+cp exp/align_ali/ct* data/src/txts/"$ctm_folder_name"
 
