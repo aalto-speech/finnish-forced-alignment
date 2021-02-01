@@ -85,7 +85,7 @@ mkdir -p exp/align
 cp exp/nnet3/chain/tree exp/align
 cp exp/nnet3/chain/final.mdl exp/align
 
-cd ../../egs/align
+utils/fix_data_dir.sh data/align
 
 utils/copy_data_dir.sh data/align data/align_hires
 
