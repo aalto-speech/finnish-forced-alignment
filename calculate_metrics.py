@@ -117,11 +117,17 @@ def calculate_ctm_mistakes(gold_ctms_df, created_ctms_df):
         # Iterate three things
         gold_iterator = df_current_gold_ctm.itertuples()
         created_iterator = df_current_created_ctm.itertuples()
+        number_of_dels = 0
+        number_of_ins = 0
         for comparison_row in token_comparisons[1:]:
             if comparison_row[0] == "OK" or comparison_row[0] == "SUB":
 
                 gold_ctm_row = next(gold_iterator)
                 created_ctm_row = next(created_iterator)
+
+                # Sanity check
+                if (comparison_row[0] == "OK") and (gold_ctm_row.token != created_ctm_row.token):
+                    print("gold token is {}, but created {}".format(gold_ctm_row.token, created_ctm_row.token))
 
                 start_difference = created_ctm_row.start - gold_ctm_row.start
                 end_difference = created_ctm_row.end - gold_ctm_row.end
@@ -129,11 +135,14 @@ def calculate_ctm_mistakes(gold_ctms_df, created_ctms_df):
 
             elif comparison_row[0] == "INS":
                 created_ctm_row = next(created_iterator)
+                number_of_ins += 1
             elif comparison_row[0] == "DEL":
                 gold_ctm_row = next(gold_iterator)
+                number_of_dels += 1
             else:
                 print("Something went terribly wrong")
                 break
+        print("for {} the number of dels was {} and ins {}".format(filename, number_of_dels, number_of_ins))
     return ctm_mistakes_seconds
 
 
