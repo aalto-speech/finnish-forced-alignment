@@ -190,6 +190,24 @@ def calculate_statistics(ctm_mistakes_seconds):
     return start_difference_median, end_difference_median, list_of_percentileofscores
 
 
+def calculate_time_from_ctms(gold_ctms_df, created_ctms_df):
+    total_time = 0
+    list_of_filenames = gold_ctms_df["Filename"].unique().tolist()
+
+    # Create dataframe with index every framerate (10ms) and initialize with silence
+    for filename in list_of_filenames:
+
+        df_current_gold_ctm = gold_ctms_df.loc[gold_ctms_df['Filename'] == filename][["start", "end", "token"]]
+        df_current_created_ctm = created_ctms_df.loc[created_ctms_df['Filename'] == filename][["start", "end", "token"]]
+
+        starttime = min(df_current_gold_ctm["start"].min(), df_current_created_ctm["start"].min())
+        endtime = max(df_current_gold_ctm["end"].max(), df_current_created_ctm["end"].max())
+        time = endtime - starttime
+        print("start is {}, end is {} and total: {}".format(starttime, endtime, time))
+        total_time += time
+    print(total_time)
+
+
 def main(gold_ctms_file, created_ctms_file, name):
     gold_ctm_df, created_ctm_df = create_ctm_dfs(gold_ctms_file, created_ctms_file)
     frame_wise_comparisons = calculate_frame_wise_comparison(gold_ctm_df, created_ctm_df)
@@ -207,6 +225,9 @@ def main(gold_ctms_file, created_ctms_file, name):
 
     statistics = calculate_statistics(nparray_ctm_mistakes_seconds)
     print(statistics)
+
+    if "sami" in arguments.name:
+        calculate_time_from_ctms(gold_ctm_df, created_ctm_df)
 
 
 if __name__ == '__main__':
