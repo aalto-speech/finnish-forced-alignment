@@ -7,6 +7,9 @@ if [ $# != 2 ]; then
   exit 1;
 fi
 
+# In case inside singularity container
+cd /opt/kaldi/egs/align
+
 csv_file=$1
 datadir_ready=$2
 
