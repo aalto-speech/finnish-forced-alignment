@@ -31,4 +31,4 @@ COPY exp/nnet3/extractor/splice_opts exp/nnet3/extractor/splice_opts
 
 COPY conf/mfcc_hires.conf conf/mfcc_hires.conf
 
-ENTRYPOINT ["./aligning_with_Docker/bin/align_from_scratch.sh"]
+ENTRYPOINT ["/opt/kaldi/egs/align/aligning_with_Docker/bin/align_from_scratch.sh"]
