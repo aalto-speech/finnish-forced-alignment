@@ -70,7 +70,7 @@ EOF
 
 if [ "$datadir_ready" = "false" ]
 then
-  python3 $bin_folder/make_wav_and_utt2spk.py
+  python3 $bin_folder/make_wav_and_utt2spk.py "$src_for_align"/wavs
   utils/utt2spk_to_spk2utt.pl data/align/utt2spk > data/align/spk2utt
   cp "$src_for_align"/txts/text data/align/text
 else

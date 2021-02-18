@@ -9,12 +9,6 @@ RUN mkdir -p exp/nnet3/chain
 RUN mkdir -p exp/nnet3/extractor
 RUN mkdir -p conf
 
-# Loading the helper scripts
-RUN git clone https://github.com/juholeinonen/aligning_with_Docker.git
-WORKDIR aligning_with_Docker
-RUN git reset --hard 76bd670
-WORKDIR /opt/kaldi/egs/align
-
 # Copying file by file for sake of transparency the DNN
 COPY exp/nnet3/chain/cmvn_opts exp/nnet3/chain/cmvn_opts
 COPY exp/nnet3/chain/final.mdl exp/nnet3/chain/final.mdl
@@ -31,4 +25,10 @@ COPY exp/nnet3/extractor/splice_opts exp/nnet3/extractor/splice_opts
 
 COPY conf/mfcc_hires.conf conf/mfcc_hires.conf
 
-ENTRYPOINT ["/opt/kaldi/egs/align/aligning_with_Docker/bin/align_from_scratch.sh"]
+# Loading the helper scripts
+RUN git clone https://github.com/juholeinonen/aligning_with_Docker.git
+WORKDIR aligning_with_Docker
+RUN git reset --hard d9c6781
+WORKDIR /opt/kaldi/egs/align
+
+ENTRYPOINT ["/opt/kaldi/egs/align/aligning_with_Docker/bin/align_in_singularity.sh"]
