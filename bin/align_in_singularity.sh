@@ -22,13 +22,15 @@ ln -s ../wsj/s5/steps steps
 ln -s data/src/conf conf
 
 mkdir exp
+mkdir -p data/align
+
 ln -s data/src/exp/nnet3 exp/nnet3
 
 cp ../wsj/s5/path.sh .
 
 sed -i '1 s/...$//' path.sh
 
-mkdir -p data/dict
+mkdir data/dict
 mkdir data/lang
 
 cat <<EOF > data/dict/optional_silence.txt
