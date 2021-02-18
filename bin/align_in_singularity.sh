@@ -9,13 +9,13 @@ fi
 
 csv_file=$1
 datadir_ready=$2
-project_dir=$3
-src_for_align=../src_for_align
+project_dir=/opt/kaldi/egs/"$3"
+src_for_align=/opt/kaldi/egs/src_for_align
 
-cd /opt/kaldi/egs/"$project_dir"
+cd "$project_dir"
 
 
-bin_folder=aligning_with_Docker/bin
+bin_folder=/opt/kaldi/egs/align/aligning_with_Docker/bin
 
 ln -s ../wsj/s5/utils utils
 ln -s ../wsj/s5/steps steps
@@ -70,7 +70,7 @@ EOF
 
 if [ "$datadir_ready" = "false" ]
 then
-  python3 $bin_folder/make_wav_and_utt2spk.py "$src_for_align"/wavs
+  python3 $bin_folder/make_wav_and_utt2spk.py "$src_for_align"/wavs "$project_dir"
   utils/utt2spk_to_spk2utt.pl data/align/utt2spk > data/align/spk2utt
   cp "$src_for_align"/txts/text data/align/text
 else
