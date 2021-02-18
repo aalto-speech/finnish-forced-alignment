@@ -29,7 +29,7 @@ def make_kaldi_files(srcpath, targetpath):
                 utt2spk_file.write(filename + " " + filename + "\n")
 
 def main(srcpath, targetpath):
-    make_kaldi_files(basepath)
+    make_kaldi_files(srcpath, targetpath)
 
 
 if __name__ == '__main__':
