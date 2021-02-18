@@ -11,7 +11,7 @@ csv_file=$1
 datadir_ready=$2
 project_dir=/opt/kaldi/egs/"$3"
 src_for_align=/opt/kaldi/egs/src_for_align
-
+src_for_mdl=/opt/kaldi/egs/align
 cd "$project_dir"
 
 
@@ -19,12 +19,12 @@ bin_folder=/opt/kaldi/egs/align/aligning_with_Docker/bin
 
 ln -s ../wsj/s5/utils utils
 ln -s ../wsj/s5/steps steps
-ln -s data/src/conf conf
+ln -s "$src_for_mdl"/conf conf
 
 mkdir exp
 mkdir -p data/align
 
-ln -s data/src/exp/nnet3 exp/nnet3
+ln -s "$src_for_mdl"/exp/nnet3 exp/nnet3
 
 cp ../wsj/s5/path.sh .
 
