@@ -111,6 +111,8 @@ steps/nnet3/align.sh --nj 1 --use_gpu false --online_ivector_dir exp/nnet3/ivect
 
 steps/get_train_ctm.sh data/align_hires data/lang exp/align_ali
 ctm_folder_name="$(date +"%Y_%m_%d_%I_%M_%p")_ctm"
-mkdir data/src/txts/"$ctm_folder_name"
-cp exp/align_ali/ct* data/src/txts/"$ctm_folder_name"
+mkdir "$ctm_folder_name"
+cp exp/align_ali/ct* "$ctm_folder_name"
+rm corpus path.sh conf steps utils
+rm -r exp data
 
