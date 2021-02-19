@@ -91,8 +91,8 @@ extra=3
 utils/prepare_lang.sh --num-extra-phone-disambig-syms $extra data/dict "<UNK>" data/lang/local data/lang
 
 mkdir -p exp/align
-cp exp/nnet3/chain/tree exp/align
-cp exp/nnet3/chain/final.mdl exp/align
+ln -s exp/nnet3/chain/tree exp/align/tree
+ln -s exp/nnet3/chain/final.mdl exp/align/final.mdl
 
 utils/fix_data_dir.sh data/align
 
@@ -105,9 +105,9 @@ steps/compute_cmvn_stats.sh data/align_hires
 
 utils/fix_data_dir.sh data/align_hires
 
-steps/online/nnet2/extract_ivectors_online.sh --cmd "run.pl" --nj $nj data/align_hires exp/nnet3/extractor exp/nnet3/ivectors_align_hires
+steps/online/nnet2/extract_ivectors_online.sh --cmd "run.pl" --nj $nj data/align_hires exp/nnet3/extractor exp/align/ivectors_hires
 
-steps/nnet3/align.sh --nj 1 --use_gpu false --online_ivector_dir exp/nnet3/ivectors_align_hires data/align_hires/ data/lang/ exp/nnet3/chain/ exp/align_ali
+steps/nnet3/align.sh --nj 1 --use_gpu false --online_ivector_dir exp/align/ivectors_hires data/align_hires/ data/lang/ exp/nnet3/chain/ exp/align_ali
 
 steps/get_train_ctm.sh data/align_hires data/lang exp/align_ali
 ctm_folder_name="$(date +"%Y_%m_%d_%I_%M_%p")_ctm"
