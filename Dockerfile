@@ -28,7 +28,7 @@ COPY conf/mfcc_hires.conf conf/mfcc_hires.conf
 # Loading the helper scripts
 RUN git clone https://github.com/juholeinonen/aligning_with_Docker.git
 WORKDIR aligning_with_Docker
-RUN git reset --hard d62bb31
+RUN git reset --hard 834fc82
 WORKDIR /opt/kaldi/egs/align
 
 ENTRYPOINT ["/opt/kaldi/egs/align/aligning_with_Docker/bin/align_in_singularity.sh"]
