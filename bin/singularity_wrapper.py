@@ -112,19 +112,13 @@ def check_framerate(wavpath):
 
 
 def main(arguments):
-    csv_file = ""
-    if arguments.lang == "fi":
-        csv_file = "phone-finnish-finnish.csv"
+    csv_file = "phone-finnish-finnish.csv"
     if arguments.datadir:
         check_framerate(arguments.datadir)
-
+        rc = subprocess.call(["/tmp/matthies/align.sh", csv_file, arguments.targetdir, arguments.datadir])
     elif arguments.wav:
         check_framerate(arguments.wav)
-
-
-
-
-
+        rc = subprocess.call(["/tmp/matthies/align.sh", csv_file, arguments.targetdir, arguments.wav, arguments.txt])
 
 
 if __name__ == '__main__':

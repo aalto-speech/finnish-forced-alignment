@@ -40,15 +40,15 @@ def create_elan_textgrid(ctm_df, target_directory):
         for ctm_row in df_current_ctm.itertuples():
             word_tier.add_interval(ctm_row.start, ctm_row.end, ctm_row.token)
 
-        textgrid.to_file(textgrid_path, codec='utf-8')
+        textgrid.to_file(str(textgrid_path), codec='utf-8')
         eaf = textgrid.to_eaf()
-        eaf.to_file(eaf_path)
+        eaf.to_file(str(eaf_path))
 
 
 def main(ctm_file):
     ctm_df = create_ctm_df(ctm_file)
     ctm_directory = pathlib.Path(ctm_file).parent
-    create_elan_textgrid(ctm_df, ctm_directory)
+    create_elan_textgrid(ctm_df, str(ctm_directory))
 
 
 if __name__ == '__main__':
