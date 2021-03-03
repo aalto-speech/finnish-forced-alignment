@@ -1,0 +1,132 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# Imports
+import argparse
+import os
+import sys
+import wave
+import subprocess
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Write individual .txt files from kaldi text file')
+    parser.add_argument('targetdir', type=str,
+                        help='Path/Name of the target directory where it is ok to create files')
+    parser.add_argument('--datadir', type=str,
+                        help='Path/Name of the data directory')
+    parser.add_argument('--wav', type=str,
+                        help='Path/Name of the audio file or directory')
+    parser.add_argument('--txt', type=str,
+                        help='Path/Name of the text file or directory')
+    parser.add_argument('--ctm', type=str,
+                        help='Path/Name of the created ctm file')
+    parser.add_argument('--eaf', type=str,
+                        help='Path/Name of the created eaf file')
+    parser.add_argument('--textgrid', type=str,
+                        help='Path/Name of the textgrid file')
+    parser.add_argument('--lang', type=str,
+                        help='Target language')
+    args = parser.parse_args()
+
+    if args.datadir is None and (args.wav is None or args.txt is None):
+        parser.error('Please provide either the data directory or wav and txt directories (or individual files).')
+    if args.targetdir == "align":
+        parser.error('Please give another name than align for target directory')
+
+    return args
+
+
+def make_wav(wavpath, tgtpath):
+    wav_name = os.path.join(tgtpath, "data/align/wav.scp")
+    utt2spk_name = os.path.join(tgtpath, "data/align/utt2spk")
+    spk2utt_name = os.path.join(tgtpath, "data/align/spk2utt")
+
+    with open(wav_name, "w", encoding="utf-8") as wavlist_file, \
+            open(utt2spk_name, "w", encoding="utf-8") as utt2spk_file, \
+            open(spk2utt_name, "w", encoding="utf-8") as spk2utt_file:
+
+        listofwavs = []
+        if os.path.isdir(wavpath):
+            listofwavs = sorted(os.listdir(wavpath))
+        elif os.path.isfile(wavpath):
+            listofwavs.append(os.path.split(wavpath)[1])
+            wavpath = os.path.split(wavpath)[0]
+
+        for wavfile in listofwavs:
+            filename, file_extension = os.path.splitext(wavfile)
+            if file_extension == ".wav":
+                wavlist_file.write(filename + " " + os.path.join(wavpath, wavfile) + "\n")
+
+                utt2spk_file.write(filename + " " + filename + "\n")
+                spk2utt_file.write(filename + " " + filename + "\n")
+
+
+def make_txt(txtpath, tgtpath):
+    text_name = os.path.join(tgtpath, "data/align/text")
+    with open(text_name, "w", encoding="utf-8") as text_file:
+        listoftxts = []
+        if os.path.isdir(txtpath):
+            listoftxts = sorted(os.listdir(txtpath))
+        elif os.path.isfile(txtpath):
+            listoftxts.append(os.path.split(txtpath)[1])
+            txtpath = os.path.split(txtpath)[0]
+
+        for txtfile in listoftxts:
+            filename, file_extension = os.path.splitext(txtfile)
+            if file_extension == ".txt":
+                utterances = []
+                with open(os.path.join(txtpath, txtfile), 'r', encoding='utf-8') as utterance_file:
+                    for line in utterance_file:
+                        utterance = line.strip()
+                        if len(utterance) == 0:
+                            continue
+                        utterances.append(utterance)
+
+                text_file.write(filename + " " + " ".join(utterances) + "\n")
+
+
+def check_framerate(wavpath):
+    prompt_text = """
+    You have an audio file with framerate incompatible with Kaldi ASR. As most speech recognizers 
+    Kaldi uses 16000Hz wav files. If you want to continue Kaldi can downsample, but we cannot guarantee the results.
+    If you want to change the rate yourself press any key, TO CONTINUE PRESS y"""
+    listofwavs = []
+    one_wrong_type = False
+    if os.path.isdir(wavpath):
+        listofwavs = sorted(os.listdir(wavpath))
+    elif os.path.isfile(wavpath):
+        listofwavs.append(os.path.split(wavpath)[1])
+        wavpath = os.path.split(wavpath)[0]
+
+    for wavname in listofwavs:
+        _, file_extension = os.path.splitext(wavname)
+        if file_extension == ".wav":
+            with wave.open(os.path.join(wavpath, wavname), "rb") as wave_file:
+                frame_rate = wave_file.getframerate()
+                if frame_rate != 16000:
+                    one_wrong_type = True
+    if one_wrong_type:
+        if input(prompt_text) != "y":
+            sys.exit()
+
+
+def main(arguments):
+    csv_file = ""
+    if arguments.lang == "fi":
+        csv_file = "phone-finnish-finnish.csv"
+    if arguments.datadir:
+        check_framerate(arguments.datadir)
+
+    elif arguments.wav:
+        check_framerate(arguments.wav)
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    arguments = parse_arguments()
+    main(arguments)

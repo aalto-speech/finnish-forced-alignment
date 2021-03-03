@@ -1,19 +1,13 @@
 #!/bin/bash
 # align will be copied from outside
 
-if [ $# != 3 ]; then
-
-  echo "You're doing this wrong"
-  exit 1;
-fi
-
 csv_file=$1
-datadir_ready=$2
-project_dir=/opt/kaldi/egs/"$3"
-src_for_align=/opt/kaldi/egs/src_for_align
+project_dir=/opt/kaldi/egs/kohdistus
+src_for_wav=/opt/kaldi/egs/src_for_wav
+src_for_txt=/opt/kaldi/egs/src_for_txt
 src_for_mdl=/opt/kaldi/egs/align
-cd "$project_dir"
 
+cd "$project_dir"
 
 bin_folder=/opt/kaldi/egs/align/aligning_with_Docker/bin
 
@@ -70,13 +64,11 @@ y
 {
 EOF
 
-if [ "$datadir_ready" = "false" ]
+if [ "$2" = "yes" ]
 then
-  python3 $bin_folder/make_wav_and_utt2spk.py "$src_for_align"/wavs "$project_dir"
-  utils/utt2spk_to_spk2utt.pl data/align/utt2spk > data/align/spk2utt
-  cp "$src_for_align"/txts/text data/align/text
+  python3 $bin_folder/make_wav_and_utt2spk.py "$project_dir" "$src_for_wav" "$src_for_txt"
 else
-  cp "$src_for_align"/align/* data/align/
+  python3 $bin_folder/make_wav_and_utt2spk.py "$project_dir" "$src_for_wav"
 fi
 
 sed -i 's/!sil/!SIL/g' data/align/text
@@ -113,6 +105,7 @@ steps/get_train_ctm.sh data/align_hires data/lang exp/align_ali
 ctm_folder_name="$(date +"%Y_%m_%d_%I_%M_%p")_ctm"
 mkdir "$ctm_folder_name"
 cp exp/align_ali/ct* "$ctm_folder_name"
+python3 $bin_folder/ctm2results.py "$ctm_folder_name"/ctm
 rm corpus path.sh conf steps utils
 rm -r exp data
 
