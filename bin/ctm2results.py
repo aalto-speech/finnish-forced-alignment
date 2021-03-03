@@ -19,7 +19,7 @@ def parse_arguments():
 def create_ctm_df(ctm_file):
     column_names = ["Filename", "segment", "start", "duration", "token"]
 
-    ctm_df = pd.read_csv(ctm_file, sep=' ', names=column_names, index_col=False, engine='python')
+    ctm_df = pd.read_csv(ctm_file, sep=' ', names=column_names, index_col=False, engine='python', encoding='utf-8')
 
     ctm_df["end"] = ctm_df.apply(lambda row: round(row.start + row.duration, 4), axis=1)
 
