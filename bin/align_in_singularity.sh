@@ -66,7 +66,7 @@ EOF
 
 if [ "$2" = "yes" ]
 then
-  python3 $bin_folder/make_wav_and_utt2spk.py "$project_dir" "$src_for_wav" "$src_for_txt"
+  python3 $bin_folder/make_wav_and_utt2spk.py "$project_dir" "$src_for_wav" --txtpath "$src_for_txt"
 else
   python3 $bin_folder/make_wav_and_utt2spk.py "$project_dir" "$src_for_wav"
 fi
