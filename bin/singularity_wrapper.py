@@ -25,7 +25,7 @@ def parse_arguments():
                         help='Path/Name of the created eaf file')
     parser.add_argument('--textgrid', type=str,
                         help='Path/Name of the textgrid file')
-    parser.add_argument('--lang', type=str,
+    parser.add_argument('--lang', type=str, default='fi', choices=('fi', 'en', 'se'),
                         help='Target language')
     args = parser.parse_args()
 
@@ -64,6 +64,10 @@ def check_framerate(wavpath):
 
 def main(arguments):
     csv_file = "phone-finnish-finnish.csv"
+    if arguments.lang == 'en':
+        csv_file = "phone-english-finnish.csv"
+    elif arguments.lang == 'se':
+        csv_file = "phone-sami-finnish.csv"
     if arguments.datadir:
         check_framerate(arguments.datadir)
         rc = subprocess.call(["/tmp/matthies/align.sh", csv_file, arguments.targetdir, arguments.datadir])
