@@ -27,6 +27,8 @@ def parse_arguments():
                         help='Path/Name of the textgrid file')
     parser.add_argument('--lang', type=str, default='fi', choices=('fi', 'en', 'se'),
                         help='Target language')
+    parser.add_argument('--debug', action='store_true',
+                        help='Run script in debug mode meaning certain files are not deleted afterwards')
     args = parser.parse_args()
 
     if args.datadir is None and (args.wav is None or args.txt is None):
@@ -68,12 +70,27 @@ def main(arguments):
         csv_file = "phone-english-finnish.csv"
     elif arguments.lang == 'se':
         csv_file = "phone-sami-finnish.csv"
+    debug = "false"
+    if arguments.debug:
+        debug = "true"
     if arguments.datadir:
         check_framerate(arguments.datadir)
-        rc = subprocess.call(["/tmp/matthies/align.sh", csv_file, arguments.targetdir, arguments.datadir])
+        rc = subprocess.call(
+            ["/tmp/matthies/align.sh",
+             csv_file,
+             debug,
+             arguments.targetdir,
+             arguments.datadir])
+
     elif arguments.wav:
         check_framerate(arguments.wav)
-        rc = subprocess.call(["/tmp/matthies/align.sh", csv_file, arguments.targetdir, arguments.wav, arguments.txt])
+        rc = subprocess.call(
+            ["/tmp/matthies/align.sh",
+             csv_file,
+             debug,
+             arguments.targetdir,
+             arguments.wav,
+             arguments.txt])
 
 
 if __name__ == '__main__':

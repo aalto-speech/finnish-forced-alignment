@@ -2,6 +2,9 @@
 # align will be copied from outside
 
 csv_file=$1
+debugBoolean=$2
+textDirBoolean=$3
+
 project_dir=/opt/kaldi/egs/kohdistus
 src_for_wav=/opt/kaldi/egs/src_for_wav
 src_for_txt=/opt/kaldi/egs/src_for_txt
@@ -64,7 +67,7 @@ y
 {
 EOF
 
-if [ "$2" = "yes" ]
+if [ "$textDirBoolean" = "textDirTrue" ]
 then
   python3 $bin_folder/make_wav_and_utt2spk.py "$project_dir" "$src_for_wav" --txtpath "$src_for_txt"
 else
@@ -106,6 +109,12 @@ ctm_folder_name="$(date +"%Y_%m_%d_%I_%M_%p")_ctm"
 mkdir "$ctm_folder_name"
 cp exp/align_ali/ct* "$ctm_folder_name"
 python3 $bin_folder/ctm2results.py "$ctm_folder_name"/ctm
+
+if [ "$debugBoolean" = "true" ]
+then
+  cp data/align/text $ctm_folder_name
+  cp data/align/wav.scp $ctm_folder_name
+  cp data/dict/lexicon.txt $ctm_folder_name
+fi
 rm corpus path.sh conf steps utils
 rm -r exp data
-
