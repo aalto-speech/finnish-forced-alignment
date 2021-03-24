@@ -9,7 +9,7 @@ wavdir=$4
 targetdir_path=$(readlink -f "$targetdir")
 wavdir_path=$(readlink -f "$wavdir")
 
-container=/tmp/matthies/kaldi-aligner-4.0.sif
+container=/tmp/matthies/kaldi-aligner-4.1.sif
 
 if [ $# = 5 ]
 then

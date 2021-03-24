@@ -43,7 +43,7 @@ def check_framerate(wavpath):
     prompt_text = """
     You have an audio file with framerate incompatible with Kaldi ASR. As most speech recognizers 
     Kaldi uses 16000Hz wav files. If you want to continue Kaldi can downsample, but we cannot guarantee the results.
-    If you want to change the rate yourself press any key, TO CONTINUE PRESS y"""
+    If you want to change the rate yourself press any key, TO CONTINUE PRESS y and [ENTER]: """
     listofwavs = []
     one_wrong_type = False
     if os.path.isdir(wavpath):
