@@ -30,10 +30,10 @@ def create_elan_textgrid(ctm_df, target_directory):
     list_of_filenames = ctm_df["Filename"].unique().tolist()
     for filename in list_of_filenames:
         df_current_ctm = ctm_df.loc[ctm_df['Filename'] == filename][["start", "end", "token"]]
-        ctm_df.to_csv(filename + ".ctm", index=False, header=None, sep=' ')
 
         textgrid_path = pathlib.Path(target_directory, str(filename)).with_suffix(".TextGrid")
         eaf_path = pathlib.Path(target_directory, str(filename)).with_suffix(".eaf")
+        ctm_path = pathlib.Path(target_directory, str(filename)).with_suffix(".ctm")
 
         max_time = df_current_ctm["end"].max()
         textgrid = pympi.Praat.TextGrid(xmax=max_time, codec='utf-8')
@@ -44,6 +44,7 @@ def create_elan_textgrid(ctm_df, target_directory):
         textgrid.to_file(str(textgrid_path), codec='utf-8')
         eaf = textgrid.to_eaf()
         eaf.to_file(str(eaf_path))
+        df_current_ctm.to_csv(str(ctm_path), index=False, header=None, sep=' ')
 
 
 def main(ctm_file):
