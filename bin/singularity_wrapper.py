@@ -25,7 +25,7 @@ def parse_arguments():
                         help='Path/Name of the created eaf file')
     parser.add_argument('--textgrid', type=str,
                         help='Path/Name of the textgrid file')
-    parser.add_argument('--lang', type=str, default='fi', choices=('fi', 'en', 'se'),
+    parser.add_argument('--lang', type=str, default='fi', choices=('fi', 'en', 'se', 'et'),
                         help='Target language')
     parser.add_argument('--debug', action='store_true',
                         help='Run script in debug mode meaning certain files are not deleted afterwards')
@@ -70,6 +70,8 @@ def main(arguments):
         csv_file = "phone-english-finnish.csv"
     elif arguments.lang == 'se':
         csv_file = "phone-sami-finnish.csv"
+    elif arguments.lang == 'et':
+        csv_file = "phone-estonian-finnish.csv"
     debug = "false"
     if arguments.debug:
         debug = "true"

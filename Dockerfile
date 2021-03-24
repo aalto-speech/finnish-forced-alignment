@@ -1,5 +1,12 @@
 FROM kaldiasr/kaldi@sha256:4b5153e87f8ec61ef96bcf1751ba97e9e39b05aedf24bea37886a54944fb44ef
 
+RUN apt-get update && apt-get install -y \
+  python3-pip
+
+ENV LANG en_US.UTF-8
+
+RUN pip3 install pandas pympi-ling 
+
 WORKDIR /opt/kaldi/egs/align
 
 # Creating Kaldi file structure
@@ -28,7 +35,7 @@ COPY conf/mfcc_hires.conf conf/mfcc_hires.conf
 # Loading the helper scripts
 RUN git clone https://github.com/juholeinonen/aligning_with_Docker.git
 WORKDIR aligning_with_Docker
-RUN git reset --hard 834fc82
+RUN git reset --hard 3e2680d 
 WORKDIR /opt/kaldi/egs/align
 
 ENTRYPOINT ["/opt/kaldi/egs/align/aligning_with_Docker/bin/align_in_singularity.sh"]
