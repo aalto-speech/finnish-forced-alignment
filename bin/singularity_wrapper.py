@@ -95,6 +95,7 @@ def check_files(wavpath, txtpath):
         if input(prompt_text) != "y":
             sys.exit()
 
+
 def main(arguments):
     csv_file = "phone-finnish-finnish.csv"
     if arguments.lang == 'en':
@@ -108,6 +109,7 @@ def main(arguments):
         debug = "true"
     if arguments.datadir:
         check_framerate(arguments.datadir)
+        check_files(arguments.datadir, arguments.datadir)
         rc = subprocess.call(
             ["/tmp/matthies/align.sh",
              csv_file,
@@ -117,6 +119,7 @@ def main(arguments):
 
     elif arguments.wav:
         check_framerate(arguments.wav)
+        check_files(arguments.wav, arguments.txt)
         rc = subprocess.call(
             ["/tmp/matthies/align.sh",
              csv_file,
