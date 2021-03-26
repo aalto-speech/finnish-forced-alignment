@@ -10,8 +10,8 @@ import subprocess
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Kaldi ASR')
-    parser.add_argument('input', type=str,
-                        help='input, media filename (wav,mp4,avi,webm) or YouTube link', nargs=1)
+    parser.add_argument('inputfile', type=str,
+                        help='input, media filename (wav,mp4,avi,webm) or YouTube link')
     parser.add_argument('targetdir', type=str,
                         help='Path/Name of the target directory where it is ok to create files')
     parser.add_argument('--srt', action='store_true',
@@ -26,12 +26,14 @@ def parse_arguments():
 
 
 def main(arguments):
-    input_directory, filename_with_extension = os.path.split(arguments.input)
+    input_directory, filename_with_extension = os.path.split(arguments.inputfile)
     filename, _ = os.path.splitext(filename_with_extension)
     abspath_inputdir = os.path.abspath(input_directory)
     abspath_targetdir = os.path.abspath(arguments.targetdir)
+    print(abspath_targetdir)
+    print(abspath_inputdir)
 
-    container_name = "kaldi-rec-2.0.sif"
+    container_name = "/tmp/matthies/kaldi-rec-2.0.sif"
     bind_input = "-B  {}:/opt/kaldi/egs/src_for_wav".format(abspath_inputdir)
     bind_output = ""
     output_file_pretext = "../../src_for_wav/"
@@ -50,7 +52,9 @@ def main(arguments):
         eaf_text = output_file_pretext + filename + ".eaf"
 
     container_command = " ".join([bind_input, bind_output, container_name, srt_text, txt_text, eaf_text])
+    print(container_command)
     container_command = " ".join(container_command.split())
+    print(container_command)
 
     rc = subprocess.call(
         ["/tmp/matthies/kaldi-rec.sh",
