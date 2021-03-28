@@ -30,8 +30,6 @@ def main(arguments):
     filename, _ = os.path.splitext(filename_with_extension)
     abspath_inputdir = os.path.abspath(input_directory)
     abspath_targetdir = os.path.abspath(arguments.targetdir)
-    print(abspath_targetdir)
-    print(abspath_inputdir)
 
     container_name = "/tmp/matthies/kaldi-rec-2.0.sif"
     bind_input = "-B  {}:/opt/kaldi/egs/src_for_wav".format(abspath_inputdir)
@@ -45,13 +43,14 @@ def main(arguments):
     txt_text = ""
     eaf_text = ""
     if arguments.srt:
-        srt_text = output_file_pretext + filename + ".srt"
+        srt_text = "--srt " + output_file_pretext + filename + ".srt"
     if arguments.txt:
-        txt_text = output_file_pretext + filename + ".txt"
+        txt_text = "--txt " + output_file_pretext + filename + ".txt"
     if arguments.eaf:
-        eaf_text = output_file_pretext + filename + ".eaf"
+        eaf_text = "--eaf " + output_file_pretext + filename + ".eaf"
 
-    container_command = " ".join([bind_input, bind_output, container_name, srt_text, txt_text, eaf_text])
+    inputfile = "../../src_for_wav/" + filename_with_extension
+    container_command = " ".join([bind_input, bind_output, container_name, inputfile, srt_text, txt_text, eaf_text])
     print(container_command)
     container_command = " ".join(container_command.split())
     print(container_command)
