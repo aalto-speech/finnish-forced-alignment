@@ -8,5 +8,5 @@ cd "$project_dir"
 
 arguments="$*"
 
-python3 kaldi-rec $arguments
+python kaldi-rec $arguments
 
