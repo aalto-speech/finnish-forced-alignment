@@ -51,9 +51,9 @@ def collect_files_in_dir(path, file_extension):
         path_to_files = os.path.split(path)[0]
 
     for name in list_of_files:
-        _, current_file_extension = os.path.splitext(name)
+        name_without_extension, current_file_extension = os.path.splitext(name)
         if current_file_extension == file_extension:
-            list_of_correct_files.append([name, os.path.join(path_to_files, name)])
+            list_of_correct_files.append([name_without_extension, os.path.join(path_to_files, name)])
 
     return list_of_correct_files
 
@@ -82,8 +82,8 @@ def check_files(wavpath, txtpath):
 
     list_of_wavs = collect_files_in_dir(wavpath, ".wav")
     list_of_txts = collect_files_in_dir(txtpath, ".txt")
-    list_of_names_in_wav = [x[1] for x in list_of_wavs]
-    list_of_names_in_txt = [x[1] for x in list_of_txts]
+    list_of_names_in_wav = [x[0] for x in list_of_wavs]
+    list_of_names_in_txt = [x[0] for x in list_of_txts]
 
     if len(list_of_names_in_wav) != len(list_of_names_in_txt):
         print("number of wav files is {}, txt files {}".format(len(list_of_names_in_wav), len(list_of_names_in_txt)))
