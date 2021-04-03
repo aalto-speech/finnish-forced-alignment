@@ -3,32 +3,49 @@
 
 lang=$1
 debug=$2
-targetdir=$3
-wavdir=$4
+singlefile=$3
+targetdir=$4
+wavdir=$5
 
-targetdir_path=$(readlink -f "$targetdir")
-wavdir_path=$(readlink -f "$wavdir")
+wav_path_for_container=""
+txt_path_for_container=""
+
+target_path_for_binding=$(readlink -f "$targetdir")
+wav_path_for_binding=$(readlink -f "$wavdir")
 
 container=/tmp/matthies/kaldi-aligner-4.2.sif
 
-if [ $# = 5 ]
+if [ "$singlefile" = "alignWholeDirectory" ]
 then
-  txtdir=$5
-  txtdir_path=$(readlink -f "$txtdir")
+  wav_path_for_container=/opt/kaldi/egs/src_for_wav
+  wav_path_for_container=/opt/kaldi/egs/src_for_wav
+else
+  wav_path_for_container=/opt/kaldi/egs/src_for_wav/"$singlefile".wav
+  wav_path_for_container=/opt/kaldi/egs/src_for_txt/"$singlefile".txt
+fi
+
+if [ $# = 6 ]
+then
+  txtdir=$6
+  txt_path_for_binding=$(readlink -f "$txtdir")
   singularity run \
-    -B "$wavdir_path":/opt/kaldi/egs/src_for_wav \
-    -B "$txtdir_path":/opt/kaldi/egs/src_for_txt \
-    -B "$targetdir_path":/opt/kaldi/egs/kohdistus \
+    -B "$wav_path_for_binding":/opt/kaldi/egs/src_for_wav \
+    -B "$txt_path_for_binding":/opt/kaldi/egs/src_for_txt \
+    -B "$target_path_for_binding":/opt/kaldi/egs/kohdistus \
     "$container" \
     "$lang" \
     "$debug" \
-    "textDirTrue"
+    "textDirTrue" \
+    "$wav_path_for_container" \
+    "$txt_path_for_container"
 else
   singularity run \
     -B "$wavdir_path":/opt/kaldi/egs/src_for_wav \
-    -B "$targetdir_path":/opt/kaldi/egs/kohdistus \
+    -B "$target_path_for_binding":/opt/kaldi/egs/kohdistus \
     "$container" \
     "$lang" \
     "$debug" \
-    "textDirFalse"
+    "textDirFalse" \
+    "$wav_path_for_container" \
+    "$txt_path_for_container"
 fi

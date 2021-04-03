@@ -4,10 +4,10 @@
 csv_file=$1
 debugBoolean=$2
 textDirBoolean=$3
+src_for_wav=$4
+src_for_txt=$5
 
 project_dir=/opt/kaldi/egs/kohdistus
-src_for_wav=/opt/kaldi/egs/src_for_wav
-src_for_txt=/opt/kaldi/egs/src_for_txt
 src_for_mdl=/opt/kaldi/egs/align
 
 cd "$project_dir"
@@ -105,7 +105,7 @@ steps/online/nnet2/extract_ivectors_online.sh --cmd "run.pl" --nj $nj data/align
 steps/nnet3/align.sh --nj 1 --use_gpu false --online_ivector_dir exp/align/ivectors_hires data/align_hires/ data/lang/ exp/nnet3/chain/ exp/align_ali
 
 steps/get_train_ctm.sh data/align_hires data/lang exp/align_ali
-ctm_folder_name="$(date +"%Y_%m_%d_%I_%M_%p")_ctm"
+ctm_folder_name="$(date +"%Y_%m_%d_%H_%M_%S")"
 mkdir "$ctm_folder_name"
 cp exp/align_ali/ct* "$ctm_folder_name"
 python3 $bin_folder/ctm2results.py "$ctm_folder_name"/ctm
