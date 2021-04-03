@@ -1,0 +1,37 @@
+# kaldiasr/kaldi:5.4, the oldest possible.
+FROM kaldiasr/kaldi@sha256:f0be730858b7646e88921170a4278e7f857f7b4baab77f5ddf8eb95563fc0fdc
+
+
+# Making kaldi-rec into a kaldi "project".
+WORKDIR /opt/kaldi/egs/kaldi-rec/s5
+
+
+# Need this to create EAF files
+RUN apt-get update && apt-get install -y \
+    locales \
+    python \
+    python-pip
+
+RUN locale-gen en_US.UTF-8
+
+RUN pip install lxml
+
+
+# Copy the whole build directory as is.
+COPY conf /opt/kaldi/egs/kaldi-rec/s5/conf
+COPY ivec /opt/kaldi/egs/kaldi-rec/s5/ivec
+COPY models /opt/kaldi/egs/kaldi-rec/s5/models
+COPY kaldi-rec /opt/kaldi/egs/kaldi-rec/s5/kaldi-rec
+COPY recognize.sh /opt/kaldi/egs/kaldi-rec/s5/recognize.sh
+
+# Linking inside image so files are in sync with binaries
+RUN ln -s ../../wsj/s5/utils utils
+RUN ln -s ../../wsj/s5/steps steps
+
+# wsj path.sh works inside container
+RUN cp ../../wsj/s5/path.sh .
+
+# Andre's script uses graphdir instead of dir
+RUN sed -i 's/dirname \$dir/dirname \$graphdir/' steps/nnet3/decode.sh
+
+ENTRYPOINT ["/opt/kaldi/egs/kaldi-rec/s5/recognize.sh"]
