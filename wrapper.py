@@ -31,7 +31,7 @@ def main(arguments):
     abspath_inputdir = os.path.abspath(input_directory)
     abspath_targetdir = os.path.abspath(arguments.targetdir)
 
-    container_name = "/tmp/matthies/kaldi-rec-2.0.sif"
+    container_name = "/tmp/matthies/kaldi-rec-2-2.sif"
     bind_input = "-B  {}:/opt/kaldi/egs/src_for_wav".format(abspath_inputdir)
     bind_output = ""
     output_file_pretext = "../../src_for_wav/"
