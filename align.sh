@@ -13,15 +13,15 @@ txt_path_for_container=""
 target_path_for_binding=$(readlink -f "$targetdir")
 wav_path_for_binding=$(readlink -f "$wavdir")
 
-container=/tmp/matthies/kaldi-aligner-4.2.sif
+container=/tmp/matthies/kaldi-aligner-5.0.sif
 
 if [ "$singlefile" = "alignWholeDirectory" ]
 then
   wav_path_for_container=/opt/kaldi/egs/src_for_wav
-  wav_path_for_container=/opt/kaldi/egs/src_for_wav
+  txt_path_for_container=/opt/kaldi/egs/src_for_txt
 else
   wav_path_for_container=/opt/kaldi/egs/src_for_wav/"$singlefile".wav
-  wav_path_for_container=/opt/kaldi/egs/src_for_txt/"$singlefile".txt
+  txt_path_for_container=/opt/kaldi/egs/src_for_txt/"$singlefile".txt
 fi
 
 if [ $# = 6 ]

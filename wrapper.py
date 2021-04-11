@@ -31,7 +31,7 @@ def main(arguments):
     abspath_inputdir = os.path.abspath(input_directory)
     abspath_targetdir = os.path.abspath(arguments.targetdir)
 
-    container_name = "/tmp/matthies/kaldi-rec-2-2.sif"
+    container_name = "/tmp/matthies/kaldi-rec-py2-1.0.sif"
     bind_input = "-B  {}:/opt/kaldi/egs/src_for_wav".format(abspath_inputdir)
     bind_output = ""
     output_file_pretext = "../../src_for_wav/"
@@ -51,7 +51,6 @@ def main(arguments):
 
     inputfile = "../../src_for_wav/" + filename_with_extension
     container_command = " ".join([bind_input, bind_output, container_name, inputfile, srt_text, txt_text, eaf_text])
-    print(container_command)
     container_command = " ".join(container_command.split())
     print(container_command)
 

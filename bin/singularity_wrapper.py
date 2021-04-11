@@ -104,9 +104,12 @@ def main(arguments):
         csv_file = "phone-sami-finnish.csv"
     elif arguments.lang == 'et':
         csv_file = "phone-estonian-finnish.csv"
+
     debug = "false"
     if arguments.debug:
         debug = "true"
+    align_file_name = "alignWholeDirectory"
+
     if arguments.datadir:
         check_framerate(arguments.datadir)
         check_files(arguments.datadir, arguments.datadir)
@@ -114,19 +117,31 @@ def main(arguments):
             ["/tmp/matthies/align.sh",
              csv_file,
              debug,
+             align_file_name,
              arguments.targetdir,
              arguments.datadir])
 
     elif arguments.wav:
+        wav_directory = arguments.wav
+        txt_directory = arguments.txt
+
         check_framerate(arguments.wav)
         check_files(arguments.wav, arguments.txt)
+
+        if os.path.isfile(arguments.wav):
+            wav_directory = os.path.split(arguments.wav)[0]
+            align_file_name = os.path.split(arguments.wav)[1]
+            align_file_name = os.path.splitext(align_file_name)[0]
+            txt_directory = os.path.split(arguments.txt)[0]
+
         rc = subprocess.call(
             ["/tmp/matthies/align.sh",
              csv_file,
              debug,
+             align_file_name,
              arguments.targetdir,
-             arguments.wav,
-             arguments.txt])
+             wav_directory,
+             txt_directory])
 
 
 if __name__ == '__main__':
