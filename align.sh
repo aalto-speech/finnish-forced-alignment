@@ -40,7 +40,7 @@ then
     "$txt_path_for_container"
 else
   singularity run \
-    -B "$wavdir_path":/opt/kaldi/egs/src_for_wav \
+    -B "$wav_path_for_binding":/opt/kaldi/egs/src_for_wav \
     -B "$target_path_for_binding":/opt/kaldi/egs/kohdistus \
     "$container" \
     "$lang" \
