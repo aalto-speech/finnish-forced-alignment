@@ -26,18 +26,22 @@ def parse_arguments():
 
 
 def main(arguments):
+    container_name = "/tmp/matthies/kaldi-rec-py2-1.0.sif"
+    wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
+    target_path_for_container = "/opt/kaldi/egs/temp/"
+    recognize_wrapper = "/tmp/matthies/kaldi-rec.sh"
+
     input_directory, filename_with_extension = os.path.split(arguments.inputfile)
     filename, _ = os.path.splitext(filename_with_extension)
     abspath_inputdir = os.path.abspath(input_directory)
     abspath_targetdir = os.path.abspath(arguments.targetdir)
 
-    container_name = "/tmp/matthies/kaldi-rec-py2-1.0.sif"
-    bind_input = "-B  {}:/opt/kaldi/egs/src_for_wav".format(abspath_inputdir)
+    bind_input = "-B  {}:{}".format(abspath_inputdir, wav_path_for_container)
     bind_output = ""
-    output_file_pretext = "../../src_for_wav/"
+    output_file_pretext = wav_path_for_container
     if abspath_inputdir != abspath_targetdir:
-        bind_output = "-B {}:/opt/kaldi/egs/temp".format(abspath_targetdir)
-        output_file_pretext = "../../temp/"
+        bind_output = "-B {}:{}".format(abspath_targetdir, target_path_for_container)
+        output_file_pretext = target_path_for_container
 
     srt_text = ""
     txt_text = ""
@@ -49,13 +53,13 @@ def main(arguments):
     if arguments.eaf:
         eaf_text = "--eaf " + output_file_pretext + filename + ".eaf"
 
-    inputfile = "../../src_for_wav/" + filename_with_extension
+    inputfile = wav_path_for_container + filename_with_extension
     container_command = " ".join([bind_input, bind_output, container_name, inputfile, srt_text, txt_text, eaf_text])
     container_command = " ".join(container_command.split())  # Deletes extra whitespace
     print(container_command)
 
     rc = subprocess.call(
-        ["/tmp/matthies/kaldi-rec.sh",
+        [recognize_wrapper,
          container_command])
 
 
