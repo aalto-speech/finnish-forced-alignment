@@ -97,6 +97,15 @@ def check_files(wavpath, txtpath):
 
 
 def main(arguments):
+
+    container_name = "/tmp/matthies/kaldi-aligner-5.0.sif"
+    wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
+    txt_path_for_container = "/opt/kaldi/egs/src_for_txt/"
+    target_path_for_container = "/opt/kaldi/egs/kohdistus/"
+    align_wrapper = "/tmp/matthies/align.sh"
+
+
+
     csv_file = "phone-finnish-finnish.csv"
     if arguments.lang == 'en':
         csv_file = "phone-english-finnish.csv"
@@ -110,38 +119,40 @@ def main(arguments):
         debug = "true"
     align_file_name = "alignWholeDirectory"
 
+    textDirBoolean = "textDirTrue"
     if arguments.datadir:
-        check_framerate(arguments.datadir)
-        check_files(arguments.datadir, arguments.datadir)
-        rc = subprocess.call(
-            ["/tmp/matthies/align.sh",
-             csv_file,
-             debug,
-             align_file_name,
-             arguments.targetdir,
-             arguments.datadir])
-
-    elif arguments.wav:
+        wav_directory = arguments.datadir
+        txt_directory = arguments.datadir
+        textDirBoolean = "textDirFalse"
+    else:  # arguments.wav
         wav_directory = arguments.wav
         txt_directory = arguments.txt
+    check_framerate(wav_directory)
+    check_files(wav_directory, txt_directory)
 
-        check_framerate(arguments.wav)
-        check_files(arguments.wav, arguments.txt)
+    if os.path.isfile(arguments.wav):
+        wav_directory, align_file_name = os.path.split(arguments.wav)
+        wav_path_for_container = wav_path_for_container + align_file_name
+        txt_path_for_container = txt_path_for_container + align_file_name[:-3] + "txt"
 
-        if os.path.isfile(arguments.wav):
-            wav_directory = os.path.split(arguments.wav)[0]
-            align_file_name = os.path.split(arguments.wav)[1]
-            align_file_name = os.path.splitext(align_file_name)[0]
-            txt_directory = os.path.split(arguments.txt)[0]
+    paths_for_container = wav_path_for_container + " " + txt_path_for_container
 
-        rc = subprocess.call(
-            ["/tmp/matthies/align.sh",
-             csv_file,
-             debug,
-             align_file_name,
-             arguments.targetdir,
-             wav_directory,
-             txt_directory])
+    abspath_input_wavdir = os.path.abspath(wav_directory)
+    abspath_input_txtdir = os.path.abspath(txt_directory)
+    abspath_targetdir = os.path.abspath(arguments.targetdir)
+
+    bind_wav_input = "-B {}:{}".format(abspath_input_wavdir, wav_path_for_container)
+    bind_txt_input = "-B {}:{}".format(abspath_input_txtdir, txt_path_for_container)
+    bind_output = "-B {}:{}".format(abspath_targetdir, target_path_for_container)
+    binding_string = " ".join([bind_wav_input, bind_txt_input, bind_output])
+
+    container_command = " ".join([binding_string, container_name, csv_file, debug, textDirBoolean, paths_for_container])
+    container_command = " ".join(container_command.split())
+    print(container_command)
+
+    rc = subprocess.call(
+        [align_wrapper,
+         container_command])
 
 
 if __name__ == '__main__':

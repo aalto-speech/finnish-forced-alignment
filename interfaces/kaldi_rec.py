@@ -51,7 +51,7 @@ def main(arguments):
 
     inputfile = "../../src_for_wav/" + filename_with_extension
     container_command = " ".join([bind_input, bind_output, container_name, inputfile, srt_text, txt_text, eaf_text])
-    container_command = " ".join(container_command.split())
+    container_command = " ".join(container_command.split())  # Deletes extra whitespace
     print(container_command)
 
     rc = subprocess.call(
