@@ -29,7 +29,7 @@ def main(arguments):
     container_name = "/tmp/matthies/kaldi-rec-py2-1.0.sif"
     wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
     target_path_for_container = "/opt/kaldi/egs/temp/"
-    recognize_wrapper = "/tmp/matthies/kaldi-rec.sh"
+    recognize_wrapper = "/tmp/matthies/recognize_wrapper.sh"
 
     input_directory, filename_with_extension = os.path.split(arguments.inputfile)
     filename, _ = os.path.splitext(filename_with_extension)

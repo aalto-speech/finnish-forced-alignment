@@ -19,12 +19,12 @@ def parse_arguments():
                         help='Path/Name of the audio file or directory')
     parser.add_argument('--txt', type=str,
                         help='Path/Name of the text file or directory')
-    parser.add_argument('--ctm', type=str,
-                        help='Path/Name of the created ctm file')
-    parser.add_argument('--eaf', type=str,
-                        help='Path/Name of the created eaf file')
-    parser.add_argument('--textgrid', type=str,
-                        help='Path/Name of the textgrid file')
+    # parser.add_argument('--ctm', type=str,
+    #                     help='Path/Name of the created ctm file')
+    # parser.add_argument('--eaf', type=str,
+    #                     help='Path/Name of the created eaf file')
+    # parser.add_argument('--textgrid', type=str,
+    #                     help='Path/Name of the textgrid file')
     parser.add_argument('--lang', type=str, default='fi', choices=('fi', 'en', 'se', 'et'),
                         help='Target language')
     parser.add_argument('--debug', action='store_true',
@@ -102,7 +102,7 @@ def main(arguments):
     wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
     txt_path_for_container = "/opt/kaldi/egs/src_for_txt/"
     target_path_for_container = "/opt/kaldi/egs/kohdistus/"
-    align_wrapper = "/tmp/matthies/align.sh"
+    align_wrapper = "/tmp/matthies/align_wrapper.sh"
 
 
 
@@ -117,25 +117,22 @@ def main(arguments):
     debug = "false"
     if arguments.debug:
         debug = "true"
-    align_file_name = "alignWholeDirectory"
 
     textDirBoolean = "textDirTrue"
     if arguments.datadir:
         wav_directory = arguments.datadir
         txt_directory = arguments.datadir
+        check_framerate(wav_directory)
+        check_files(wav_directory, txt_directory)
         textDirBoolean = "textDirFalse"
     else:  # arguments.wav
         wav_directory = arguments.wav
         txt_directory = arguments.txt
-    check_framerate(wav_directory)
-    check_files(wav_directory, txt_directory)
-
-    if os.path.isfile(arguments.wav):
-        wav_directory, align_file_name = os.path.split(arguments.wav)
-        wav_path_for_container = wav_path_for_container + align_file_name
-        txt_path_for_container = txt_path_for_container + align_file_name[:-3] + "txt"
-
-    paths_for_container = wav_path_for_container + " " + txt_path_for_container
+        check_framerate(wav_directory)
+        check_files(wav_directory, txt_directory)
+        if os.path.isfile(arguments.wav):
+            wav_directory, align_file_name = os.path.split(arguments.wav)
+            txt_directory, _ = os.path.split(arguments.txt)
 
     abspath_input_wavdir = os.path.abspath(wav_directory)
     abspath_input_txtdir = os.path.abspath(txt_directory)
@@ -145,6 +142,12 @@ def main(arguments):
     bind_txt_input = "-B {}:{}".format(abspath_input_txtdir, txt_path_for_container)
     bind_output = "-B {}:{}".format(abspath_targetdir, target_path_for_container)
     binding_string = " ".join([bind_wav_input, bind_txt_input, bind_output])
+
+    if arguments.wav and os.path.isfile(arguments.wav):
+        wav_path_for_container = wav_path_for_container + align_file_name
+        txt_path_for_container = txt_path_for_container + align_file_name[:-3] + "txt"
+
+    paths_for_container = wav_path_for_container + " " + txt_path_for_container
 
     container_command = " ".join([binding_string, container_name, csv_file, debug, textDirBoolean, paths_for_container])
     container_command = " ".join(container_command.split())
