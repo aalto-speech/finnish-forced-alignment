@@ -6,7 +6,7 @@ import argparse
 import os
 import sys
 import subprocess
-from kaldi_rec_conf import container_name, recognize_wrapper
+from kaldi_rec_conf import container_name, singularity_wrapper
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Kaldi ASR')

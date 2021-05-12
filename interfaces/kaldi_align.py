@@ -7,7 +7,7 @@ import os
 import sys
 import wave
 import subprocess
-from kaldi_align_conf import container_name, singulairity_wrapper
+from kaldi_align_conf import container_name, singularity_wrapper
 
 
 def parse_arguments():
