@@ -7,7 +7,7 @@ import os
 import sys
 import wave
 import subprocess
-from kaldi_align_conf import container_name, align_wrapper
+from kaldi_align_conf import container_name, singulairity_wrapper
 
 
 def parse_arguments():
@@ -151,7 +151,7 @@ def main(arguments):
     print(container_command)
 
     rc = subprocess.call(
-        [align_wrapper,
+        [singularity_wrapper,
          container_command])
 
 

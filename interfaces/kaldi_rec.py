@@ -57,7 +57,7 @@ def main(arguments):
     print(container_command)
 
     rc = subprocess.call(
-        [recognize_wrapper,
+        [singularity_wrapper,
          container_command])
 
 
