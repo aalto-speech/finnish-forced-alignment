@@ -7,6 +7,7 @@ import os
 import sys
 import wave
 import subprocess
+from kaldi_align_conf import container_name, singularity_wrapper
 
 
 def parse_arguments():
@@ -19,12 +20,12 @@ def parse_arguments():
                         help='Path/Name of the audio file or directory')
     parser.add_argument('--txt', type=str,
                         help='Path/Name of the text file or directory')
-    parser.add_argument('--ctm', type=str,
-                        help='Path/Name of the created ctm file')
-    parser.add_argument('--eaf', type=str,
-                        help='Path/Name of the created eaf file')
-    parser.add_argument('--textgrid', type=str,
-                        help='Path/Name of the textgrid file')
+    # parser.add_argument('--ctm', type=str,
+    #                     help='Path/Name of the created ctm file')
+    # parser.add_argument('--eaf', type=str,
+    #                     help='Path/Name of the created eaf file')
+    # parser.add_argument('--textgrid', type=str,
+    #                     help='Path/Name of the textgrid file')
     parser.add_argument('--lang', type=str, default='fi', choices=('fi', 'en', 'se', 'et'),
                         help='Target language')
     parser.add_argument('--debug', action='store_true',
@@ -97,6 +98,11 @@ def check_files(wavpath, txtpath):
 
 
 def main(arguments):
+
+    wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
+    txt_path_for_container = "/opt/kaldi/egs/src_for_txt/"
+    target_path_for_container = "/opt/kaldi/egs/kohdistus/"
+
     csv_file = "phone-finnish-finnish.csv"
     if arguments.lang == 'en':
         csv_file = "phone-english-finnish.csv"
@@ -104,29 +110,49 @@ def main(arguments):
         csv_file = "phone-sami-finnish.csv"
     elif arguments.lang == 'et':
         csv_file = "phone-estonian-finnish.csv"
+
     debug = "false"
     if arguments.debug:
         debug = "true"
-    if arguments.datadir:
-        check_framerate(arguments.datadir)
-        check_files(arguments.datadir, arguments.datadir)
-        rc = subprocess.call(
-            ["/tmp/matthies/align.sh",
-             csv_file,
-             debug,
-             arguments.targetdir,
-             arguments.datadir])
 
-    elif arguments.wav:
-        check_framerate(arguments.wav)
-        check_files(arguments.wav, arguments.txt)
-        rc = subprocess.call(
-            ["/tmp/matthies/align.sh",
-             csv_file,
-             debug,
-             arguments.targetdir,
-             arguments.wav,
-             arguments.txt])
+    textDirBoolean = "textDirTrue"
+    if arguments.datadir:
+        wav_directory = arguments.datadir
+        txt_directory = arguments.datadir
+        check_framerate(wav_directory)
+        check_files(wav_directory, txt_directory)
+        textDirBoolean = "textDirFalse"
+    else:  # arguments.wav
+        wav_directory = arguments.wav
+        txt_directory = arguments.txt
+        check_framerate(wav_directory)
+        check_files(wav_directory, txt_directory)
+        if os.path.isfile(arguments.wav):
+            wav_directory, align_file_name = os.path.split(arguments.wav)
+            txt_directory, _ = os.path.split(arguments.txt)
+
+    abspath_input_wavdir = os.path.abspath(wav_directory)
+    abspath_input_txtdir = os.path.abspath(txt_directory)
+    abspath_targetdir = os.path.abspath(arguments.targetdir)
+
+    bind_wav_input = "-B {}:{}".format(abspath_input_wavdir, wav_path_for_container)
+    bind_txt_input = "-B {}:{}".format(abspath_input_txtdir, txt_path_for_container)
+    bind_output = "-B {}:{}".format(abspath_targetdir, target_path_for_container)
+    binding_string = " ".join([bind_wav_input, bind_txt_input, bind_output])
+
+    if arguments.wav and os.path.isfile(arguments.wav):
+        wav_path_for_container = wav_path_for_container + align_file_name
+        txt_path_for_container = txt_path_for_container + align_file_name[:-3] + "txt"
+
+    paths_for_container = wav_path_for_container + " " + txt_path_for_container
+
+    container_command = " ".join([binding_string, container_name, csv_file, debug, textDirBoolean, paths_for_container])
+    container_command = " ".join(container_command.split())
+    print(container_command)
+
+    rc = subprocess.call(
+        [singularity_wrapper,
+         container_command])
 
 
 if __name__ == '__main__':

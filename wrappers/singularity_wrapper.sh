@@ -3,4 +3,4 @@
 
 arguments="$*"
 
-singularity run $arguments 
+singularity run $arguments
