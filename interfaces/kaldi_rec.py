@@ -6,7 +6,7 @@ import argparse
 import os
 import sys
 import subprocess
-
+from kaldi_rec_conf import container_name, singularity_wrapper
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Kaldi ASR')
@@ -26,10 +26,8 @@ def parse_arguments():
 
 
 def main(arguments):
-    container_name = "/tmp/matthies/kaldi-rec-py2-1.0.sif"
     wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
     target_path_for_container = "/opt/kaldi/egs/temp/"
-    recognize_wrapper = "/tmp/matthies/recognize_wrapper.sh"
 
     input_directory, filename_with_extension = os.path.split(arguments.inputfile)
     filename, _ = os.path.splitext(filename_with_extension)
@@ -59,7 +57,7 @@ def main(arguments):
     print(container_command)
 
     rc = subprocess.call(
-        [recognize_wrapper,
+        [singularity_wrapper,
          container_command])
 
 

@@ -7,6 +7,7 @@ import os
 import sys
 import wave
 import subprocess
+from kaldi_align_conf import container_name, singularity_wrapper
 
 
 def parse_arguments():
@@ -98,13 +99,9 @@ def check_files(wavpath, txtpath):
 
 def main(arguments):
 
-    container_name = "/tmp/matthies/kaldi-aligner-5.0.sif"
     wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
     txt_path_for_container = "/opt/kaldi/egs/src_for_txt/"
     target_path_for_container = "/opt/kaldi/egs/kohdistus/"
-    align_wrapper = "/tmp/matthies/align_wrapper.sh"
-
-
 
     csv_file = "phone-finnish-finnish.csv"
     if arguments.lang == 'en':
@@ -154,7 +151,7 @@ def main(arguments):
     print(container_command)
 
     rc = subprocess.call(
-        [align_wrapper,
+        [singularity_wrapper,
          container_command])
 
 
