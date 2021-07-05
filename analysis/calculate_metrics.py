@@ -3,7 +3,7 @@
 
 # Imports
 import pandas as pd
-from wer import wer
+from analysis import wer # breaks if run as a script and not -m
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
@@ -112,7 +112,7 @@ def calculate_ctm_mistakes(gold_ctms_df, created_ctms_df):
         # ["OP", "REF", "HYP"]
         # "OK","SUB","INS", "***", "DEL", "***"
         wer_results, token_comparisons = \
-            wer(df_current_gold_ctm["token"].tolist(), df_current_created_ctm["token"].tolist(), True)
+            wer.wer(df_current_gold_ctm["token"].tolist(), df_current_created_ctm["token"].tolist(), True)
 
         # Iterate three things
         gold_iterator = df_current_gold_ctm.itertuples()
