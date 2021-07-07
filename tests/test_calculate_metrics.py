@@ -6,7 +6,7 @@ from analysis import calculate_metrics as c_m
 
 @pytest.fixture
 def dfs():
-    gold_df, created_df = c_m.create_ctm_dfs("tests/gold.ctm", "tests/created.ctm")
+    gold_df, created_df = c_m.create_ctm_dfs("tests/data/gold.ctm", "tests/data/created.ctm")
     return gold_df, created_df
 
 
