@@ -23,21 +23,21 @@ def test_finnish_mv_results(tmp_path):
 
     assert sum(frames[0]) > 13000, "Baseline model had more correct token frames"
     assert sum(frames[1]) > 1300, "Baseline model had more correct empty frames"
-    assert sum(frames[2]) < 1300, "Baseline model had less incorrect frames"
+    assert sum(frames[2]) < 1000, "Baseline model had less incorrect frames"
 
     mistakes = np.asarray(c_m.calculate_ctm_mistakes(gold_df, created_df))
-    assert sum(abs(mistakes[:,0])) < 8.3, "Baseline model had better accuracy on start differences"
-    assert sum(abs(mistakes[:,1])) < 8.7, "Baseline model had better accuracy on end differences"
+    assert sum(abs(mistakes[:,0])) < 4.3, "Baseline model had better accuracy on start differences"
+    assert sum(abs(mistakes[:,1])) < 4.7, "Baseline model had better accuracy on end differences"
      
-    assert max(abs(mistakes[:,0])) < 0.16, "Baseline model had better accuracy on max start time"
-    assert max(abs(mistakes[:,1])) < 0.12, "Baseline model had better accuracy on max end time"
+    assert max(abs(mistakes[:,0])) < 0.016, "Baseline model had better accuracy on max start time"
+    assert max(abs(mistakes[:,1])) < 0.012, "Baseline model had better accuracy on max end time"
 
     baseline_percentiles = [19.4, 50.2, 86.7, 98.6, 21.1, 53.4, 82.8, 98.6]
 
     errors = []
     stats = c_m.calculate_statistics(mistakes)
     for baseline, new in zip(baseline_percentiles, stats[2]):
-        if baseline - new > 5.0:
+        if baseline - new > 0.0050:
             errors.append("baseline better in percentiles")
 
     assert not errors, "errors occured:\n{}".format("\n".join(errors))
