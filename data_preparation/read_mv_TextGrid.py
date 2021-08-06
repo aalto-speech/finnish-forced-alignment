@@ -27,12 +27,12 @@ def clean_text(text):
     return text
 
 
-def create_ctm_from_textgrid(textgrid_file, directory="default"):
+def create_ctm_from_textgrid(textgrid_file, directory=None):
     textgrid_path = pathlib.Path(textgrid_file)
     textgrid = pympi.Praat.TextGrid(textgrid_path, codec='8859')
     textgrid_id = textgrid_path.stem
     textgrid_parent_dir = textgrid_path.parents
-    if directory == "default":
+    if directory == None:
         target_directory = textgrid_parent_dir[1]
     else:
         target_directory = directory
