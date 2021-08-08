@@ -10,8 +10,10 @@ import re
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Write TextGrid file into ctm')
-    parser.add_argument('name', type=str,
+    parser.add_argument('textgrid', type=str,
                         help='Path/Name of the TextGrid file')
+    parser.add_argument('--parent_dir', type=str,
+                        help='Path/name to the directory with new txt and ctm directories')
     args = parser.parse_args()
     return args
 
@@ -25,14 +27,20 @@ def clean_text(text):
     return text
 
 
-def create_ctm_from_textgrid(textgrid_file):
+def create_ctm_from_textgrid(textgrid_file, directory=None):
     textgrid_path = pathlib.Path(textgrid_file)
     textgrid = pympi.Praat.TextGrid(textgrid_path, codec='8859')
     textgrid_id = textgrid_path.stem
     textgrid_parent_dir = textgrid_path.parents
+    if directory == None:
+        target_directory = textgrid_parent_dir[1]
+    else:
+        target_directory = directory
 
-    ctm_name = pathlib.Path(textgrid_parent_dir[1], "CTM", textgrid_id).with_suffix(".ctm")
-    text_name = pathlib.Path(textgrid_parent_dir[1], "TXT", textgrid_id).with_suffix('.txt')
+    ctm_name = pathlib.Path(target_directory, "CTM", textgrid_id).with_suffix(".ctm")
+    text_name = pathlib.Path(target_directory, "TXT", textgrid_id).with_suffix('.txt')
+    ctm_name.parent.mkdir(parents=True, exist_ok=True) # same behavior as the POSIX mkdir -p command
+    text_name.parent.mkdir(parents=True, exist_ok=True) # same behavior as the POSIX mkdir -p command
 
     with open(text_name, "w", encoding="utf-8") as text_file, \
             open(ctm_name, "w", encoding="utf-8") as ctm_file:
@@ -55,10 +63,10 @@ def create_ctm_from_textgrid(textgrid_file):
                 print("Something odd happened")
 
 
-def main(textgrid_file):
-    create_ctm_from_textgrid(textgrid_file)
+def main(arguments):
+    create_ctm_from_textgrid(arguments.textgrid, arguments.parent_dir)
 
 
 if __name__ == '__main__':
     arguments = parse_arguments()
-    main(arguments.name)
+    main(arguments)
