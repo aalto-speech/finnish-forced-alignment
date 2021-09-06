@@ -1,0 +1,9 @@
+FROM juholeinonen/kaldi-align@sha256:3ba604c135312d30b09644d821204bd53ccb2104924b324e712c22a859275972
+
+ENV LANG en_US.UTF-8
+
+WORKDIR /opt/kaldi/egs/align
+
+COPY g2p_mappings/phone-komi-finnish.csv aligning_with_Docker/bin
+
+ENTRYPOINT ["/opt/kaldi/egs/align/aligning_with_Docker/bin/align_in_singularity.sh"]
