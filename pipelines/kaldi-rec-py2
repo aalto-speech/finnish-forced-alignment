@@ -903,9 +903,13 @@ def main():
 
     os.chdir(original_cwd)
     if args['eaf_filename'] != None:
-        asr_word_segmentations_ms = alignment_to_milliseconds(asr_word_segmentations)
-        eaf_filename = os.path.realpath(args['eaf_filename'])
-        write_elan(wav_filename,asr_word_segmentations_ms,eaf_filename)  
+        # asr_word_segmentations_ms = alignment_to_milliseconds(asr_word_segmentations)
+        # eaf_filename = os.path.realpath(args['eaf_filename'])
+        # write_elan(wav_filename,asr_word_segmentations_ms,eaf_filename)  
+        with open(ctm_filename, 'r', encoding='utf-8') as fr: # nested statements work with < 2.7
+            with open(args['eaf_filename']+'.ctm', 'w', encoding='utf-8') as fw:
+                for line in fr:
+                    fw.write(line)
     if args['srt_filename'] != None:
         srt_filename = os.path.realpath(args['srt_filename'])
         write_srt(asr_word_segmentations,srt_filename)
