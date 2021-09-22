@@ -8,7 +8,7 @@ cd "$project_dir"
 
 arguments="$*"
 
-python finnish-forced-alignment/pipelines/kaldi-rec $arguments
+python finnish-forced-alignment/pipelines/kaldi-rec-py2 $arguments
 
 # for loop all .ctm files. use basename etc. check previous scripts. if no files works. should not be two files. delete after loop just in case?
 for ctm in *.ctm # should be only one, if there is any
