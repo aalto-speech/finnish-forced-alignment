@@ -334,7 +334,7 @@ def alignment_to_milliseconds(rfile):
         speaker_id = line[3]
         start_ms = int(float(start_s) * 1000.0)
         end_ms = int(float(end_s) * 1000.0)
-        r.append((start_s,end_s,token,speaker_id))
+        r.append((start_ms,end_ms,token,speaker_id))
     return r
 
 
@@ -909,9 +909,9 @@ def main():
 
     os.chdir(original_cwd)
     if args['eaf_filename'] != None:
-        # asr_word_segmentations_ms = alignment_to_milliseconds(asr_word_segmentations)
-        # eaf_filename = os.path.realpath(args['eaf_filename'])
-        # write_elan(wav_filename,asr_word_segmentations_ms,eaf_filename)  
+        asr_word_segmentations_ms = alignment_to_milliseconds(asr_word_segmentations)
+        eaf_filename = os.path.realpath(args['eaf_filename'])
+        write_elan(wav_filename,asr_word_segmentations_ms,eaf_filename)  
     if args['srt_filename'] != None:
         srt_filename = os.path.realpath(args['srt_filename'])
         write_srt(asr_word_segmentations,srt_filename)
