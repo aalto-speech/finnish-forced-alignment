@@ -855,6 +855,12 @@ def main():
     
     
     asr_word_segmentations = []
+    ctm_with_tokens = [] # 1.1
+
+    # segment name for final ctm
+    path_to, filename_for_ctm = os.path.split(wav_filename)
+    final_name_for_ctm, wav_extension = os.path.splitext(filename_for_ctm)
+
     index = 0
     current_seg_id = ""
     sub_word = ""
@@ -876,6 +882,7 @@ def main():
             old_token = prev_segmentation[2]
             old_speaker = prev_segmentation[3]  
             asr_word_segmentations.append((old_end_time,start_time,".",old_speaker))  
+            ctm_with_tokens.append((filename_for_ctm,"1",old_end_time,start_time-old_end_time,"."))
             index += 1
         if token.startswith("+") == False and token.endswith("+") == True:
             sub_word_start = start_time
@@ -889,12 +896,14 @@ def main():
             end_time = float(sub_word_end) 
             token = str(sub_word)
             asr_word_segmentations.append((start_time,end_time,token,speaker))
+            ctm_with_tokens.append((filename_for_ctm,"1",start_time,end_time-start_time,token))
             sub_word = ""
             sub_word_start = ""
             sub_word_end = ""
             index += 1      
         else:
             asr_word_segmentations.append((start_time,end_time,token,speaker))
+            ctm_with_tokens.append((filename_for_ctm,"1",start_time,end_time-start_time,token))
             index += 1
         current_seg_id = seg_id    
 
@@ -906,10 +915,11 @@ def main():
         # asr_word_segmentations_ms = alignment_to_milliseconds(asr_word_segmentations)
         # eaf_filename = os.path.realpath(args['eaf_filename'])
         # write_elan(wav_filename,asr_word_segmentations_ms,eaf_filename)  
-        with open(ctm_filename, 'r') as fr: # nested statements work with < 2.7
-            with open(args['eaf_filename']+'.ctm', 'w') as fw:
-                for line in fr:
-                    fw.write(line)
+        with open(args['eaf_filename']+'.ctm', 'w') as fw:
+            for ctm_index in ctm_with_tokens:
+                ctm_indexes_string = [str(x) for x in ctm_index]
+                line_to_write = " ".join(ctm_indexes_string + "\n"
+                fw.write(line_to_write)
     if args['srt_filename'] != None:
         srt_filename = os.path.realpath(args['srt_filename'])
         write_srt(asr_word_segmentations,srt_filename)
