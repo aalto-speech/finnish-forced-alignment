@@ -918,7 +918,7 @@ def main():
         with open(args['eaf_filename']+'.ctm', 'w') as fw:
             for ctm_index in ctm_with_tokens:
                 ctm_indexes_string = [str(x) for x in ctm_index]
-                line_to_write = " ".join(ctm_indexes_string + "\n"
+                line_to_write = " ".join(ctm_indexes_string) + "\n"
                 fw.write(line_to_write)
     if args['srt_filename'] != None:
         srt_filename = os.path.realpath(args['srt_filename'])
