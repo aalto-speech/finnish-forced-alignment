@@ -855,12 +855,6 @@ def main():
     
     
     asr_word_segmentations = []
-    ctm_with_tokens = [] # 1.1
-
-    # segment name for final ctm
-    path_to, filename_for_ctm = os.path.split(wav_filename)
-    final_name_for_ctm, wav_extension = os.path.splitext(filename_for_ctm)
-
     index = 0
     current_seg_id = ""
     sub_word = ""
