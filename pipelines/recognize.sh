@@ -10,9 +10,8 @@ arguments="$*"
 
 python finnish-forced-alignment/pipelines/kaldi-rec-py2 $arguments
 
-for txt in ../../temp/*.txt # should be only one, if there is any
-do
-  if [ -f $txt ]; then
-  sed -i 's/NULL: //' $txt
-  fi
-done
+txt=($(python finnish-forced-alignment/pipelines/rec-util $arguments))
+
+if [ -f $txt ]; then
+  sed -i 's/tero/oliteroennen/' $txt
+fi
