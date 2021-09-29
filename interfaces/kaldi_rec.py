@@ -11,7 +11,7 @@ from kaldi_rec_conf import container_name, singularity_wrapper
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Kaldi ASR')
     parser.add_argument('inputfile', type=str,
-                        help='input, media filename (wav,mp4,avi,webm) or YouTube link')
+                        help='input, media filename (wav)')
     parser.add_argument('targetdir', type=str,
                         help='Path/Name of the target directory where it is ok to create files')
     parser.add_argument('--srt', action='store_true',
