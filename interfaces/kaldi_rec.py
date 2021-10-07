@@ -34,12 +34,9 @@ def main(arguments):
     abspath_inputdir = os.path.abspath(input_directory)
     abspath_targetdir = os.path.abspath(arguments.targetdir)
 
-    bind_input = "-B  {}:{}".format(abspath_inputdir, wav_path_for_container)
-    bind_output = ""
-    output_file_pretext = wav_path_for_container
-    if abspath_inputdir != abspath_targetdir:
-        bind_output = "-B {}:{}".format(abspath_targetdir, target_path_for_container)
-        output_file_pretext = target_path_for_container
+    bind_input = "-B {}:{}".format(abspath_inputdir, wav_path_for_container)
+    bind_output = "-B {}:{}".format(abspath_targetdir, target_path_for_container)
+    output_file_pretext = target_path_for_container
 
     srt_text = ""
     txt_text = ""

@@ -176,7 +176,7 @@ def split_audio(SOX_PATH,srate,infile):
         seg_filename = infile.replace(".wav","_"+str(seg_index)+".wav")
 
         os.system(SOX_PATH+" "+infile+" -t wav -r "+str(srate)+" -b 16 -e signed-integer -c 1 "+seg_filename+" trim "+str(start_seconds)+" "+str(dur_seconds))
-        audiofiles.append({ 'start': start_seconds, 'file': seg_filename, 'speaker': 'NULL' })
+        audiofiles.append({ 'start': start_seconds, 'file': seg_filename, 'speaker': 'S1' })
         seg_index += 1
     return audiofiles
 
@@ -334,7 +334,7 @@ def alignment_to_milliseconds(rfile):
         speaker_id = line[3]
         start_ms = int(float(start_s) * 1000.0)
         end_ms = int(float(end_s) * 1000.0)
-        r.append((start_s,end_s,token,speaker_id))
+        r.append((start_ms,end_ms,token,speaker_id))
     return r
 
 
