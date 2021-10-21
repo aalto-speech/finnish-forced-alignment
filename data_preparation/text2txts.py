@@ -4,6 +4,7 @@
 # Imports
 import argparse
 import os
+import pathlib
 
 
 def parse_arguments():
@@ -22,7 +23,7 @@ def create_txts_from_text(text_file, directory=None):
     if directory == None:
         target_directory = text_parent_dir[1]
     else:
-        target_directory = directory
+        target_directory = pathlib.Path(directory)
 
     with open(text_file, "r", encoding="utf-8") as text:
         for line in text:
@@ -31,7 +32,7 @@ def create_txts_from_text(text_file, directory=None):
             utterance_ID = line_parts[0]
             utterance_text = " ".join(line_parts[1:]) + "\n"
             utterance_name = pathlib.Path(utterance_ID).with_suffix(".txt")
-            with open(utterance_name, "w", encoding="utf-8") as utterance_file:
+            with open(target_directory.joinpath(utterance_name), "w", encoding="utf-8") as utterance_file:
                 utterance_file.write(utterance_text)
 
 
