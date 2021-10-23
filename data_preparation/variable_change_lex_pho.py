@@ -40,12 +40,14 @@ def main(corpus_file, phone_map_file, lexicon_file):
             for window in range(max_window_size, 0, -1):
                 letters_left = len(line) - i
                 current_window = min(letters_left, window)
-                letters = line[i:current_window]
+                letters = line[i:i + current_window]
                 if letters not in odd_characters:
                     if letters in phone_map:
                         dictionary_more_than_n.write(u" " + phone_map[letters])
-                        i + current_window
+                        i += current_window
                         break
+                    elif len(letters) == 1:
+                        sys.exit("There is no mapping for grapheme {}".format(letters))
                 else:
                     if current_window == 0:
                         i += 1
