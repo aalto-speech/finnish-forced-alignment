@@ -11,7 +11,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Write individual .txt files from kaldi text file')
     parser.add_argument('text_file', type=str,
                         help='Path/Name of the text file')
-    parser.add_argument('--parent_dir', type=str,
+    parser.add_argument('--target_dir', type=str,
                         help='Path/name to the directory with new txts')
     args = parser.parse_args()
     return args
@@ -21,7 +21,7 @@ def create_txts_from_text(text_file, directory=None):
     text_path = pathlib.Path(text_file)
     text_parent_dir = text_path.parents
     if directory == None:
-        target_directory = text_parent_dir[1]
+        target_directory = text_parent_dir[0]
     else:
         target_directory = pathlib.Path(directory)
 
@@ -37,7 +37,7 @@ def create_txts_from_text(text_file, directory=None):
 
 
 def main(arguments):
-    create_txts_from_text(arguments.text_file, arguments.parent_dir)
+    create_txts_from_text(arguments.text_file, arguments.target_dir)
 
 
 if __name__ == '__main__':
