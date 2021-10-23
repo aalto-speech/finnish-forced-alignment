@@ -10,6 +10,7 @@ dzs,d t s
 e,e
 é,e
 f,f
+g,g
 gy,d y
 h,h
 i,I
@@ -25,6 +26,7 @@ o,o
 ó,o
 ö,2
 ő,2
+õ,2
 p,p
 q,k U
 r,r
@@ -36,6 +38,7 @@ u,U
 ú,U
 ü,y
 ű,U
+û,U
 v,v
 w,v
 x,k s
@@ -53,6 +56,7 @@ Dzs,d t s
 E,e
 É,e
 F,f
+G,g
 Gy,d y
 H,h
 I,I
@@ -68,6 +72,7 @@ O,o
 Ó,o
 Ö,2
 Ő,2
+Õ,2
 P,p
 Q,k U
 R,r
@@ -79,9 +84,19 @@ U,U
 Ú,U
 Ü,y
 Ű,U
+Û,U
 V,v
 W,v
 X,k s
 Y,I
 Z,t s
 Zs,t s h
+CS,t s h
+DZ,d t s
+DZS,d t s
+GY,d y
+LY,A I
+NY,N
+SZ,s
+TY,t
+ZS,t s h
