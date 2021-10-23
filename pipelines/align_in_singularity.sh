@@ -79,7 +79,7 @@ sed -i 's/<unk>/<UNK>/g' data/align/text
 
 cut -f 2- -d ' ' data/align/text > corpus
 
-python3 $bin_folder/change_lex_pho.py corpus $bin_folder/$csv_file
+python3 $bin_folder/variable_change_lex_pho.py corpus $bin_folder/$csv_file
 mv lexicon.txt data/dict
 
 extra=3
