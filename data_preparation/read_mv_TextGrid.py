@@ -37,8 +37,8 @@ def create_ctm_from_textgrid(textgrid_file, directory=None):
     else:
         target_directory = directory
 
-    ctm_name = pathlib.Path(target_directory, "CTM", textgrid_id).with_suffix(".ctm")
-    text_name = pathlib.Path(target_directory, "TXT", textgrid_id).with_suffix('.txt')
+    ctm_name = pathlib.Path(target_directory, "ctm", textgrid_id).with_suffix(".ctm")
+    text_name = pathlib.Path(target_directory, "txt", textgrid_id).with_suffix('.txt')
     ctm_name.parent.mkdir(parents=True, exist_ok=True) # same behavior as the POSIX mkdir -p command
     text_name.parent.mkdir(parents=True, exist_ok=True) # same behavior as the POSIX mkdir -p command
 
