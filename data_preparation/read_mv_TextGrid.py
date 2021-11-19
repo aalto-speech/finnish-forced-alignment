@@ -50,7 +50,8 @@ def create_ctm_from_textgrid(textgrid_file, directory=None):
                 for interval in tier.intervals:
                     interval_strings.append(interval[2])
                 utterance_text = clean_text(" ".join(interval_strings))
-                text_file.write(textgrid_id + " " + utterance_text + "\n")
+                #text_file.write(textgrid_id + " " + utterance_text + "\n")
+                text_file.write(utterance_text + "\n")
             elif tier.name == "word":
                 for word in tier.intervals:
                     if len(word[2]) > 0:
