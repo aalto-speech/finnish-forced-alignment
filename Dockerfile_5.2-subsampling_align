@@ -1,0 +1,9 @@
+FROM juholeinonen/kaldi-align@sha256:97fa752ed9cf4cdb5b9264b18541941e83f6f259c64841075adf8c0748201363
+
+ENV LANG en_US.UTF-8
+
+WORKDIR /opt/kaldi/egs/align
+
+COPY frame_subsampling_factor exp/nnet3/chain
+
+ENTRYPOINT ["/opt/kaldi/egs/align/aligning_with_Docker/bin/align.sh"]
