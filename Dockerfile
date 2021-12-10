@@ -1,1 +1,0 @@
-Dockerfile_5.2-align
