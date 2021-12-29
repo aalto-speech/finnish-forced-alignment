@@ -7,7 +7,11 @@ import os
 import sys
 import wave
 import subprocess
+import yaml
+
 from kaldi_align_conf import container_name, singularity_wrapper
+
+config_file = "config.yaml"
 
 
 def parse_arguments():
@@ -28,6 +32,8 @@ def parse_arguments():
     #                     help='Path/Name of the textgrid file')
     parser.add_argument('--lang', type=str, default='fi', choices=('fi', 'fi-conv', 'en', 'se', 'et', 'kv'),
                         help='Target language')
+    parser.add_argument('--container', type=str,
+                        help='The Kaldi-align singularity container used for aligning speech.')
     parser.add_argument('--debug', action='store_true',
                         help='Run script in debug mode meaning certain files are not deleted afterwards')
     args = parser.parse_args()
@@ -97,7 +103,14 @@ def check_files(wavpath, txtpath):
             sys.exit()
 
 
+def load_parameters():
+
 def main(arguments):
+
+    if arguments.container:
+        container_name = arguments.container
+    else:
+
 
     wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
     txt_path_for_container = "/opt/kaldi/egs/src_for_txt/"
