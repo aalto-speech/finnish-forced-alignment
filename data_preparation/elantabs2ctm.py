@@ -47,7 +47,7 @@ def create_ctm_and_text(tab_aligned_file, apply_re):
     ctm_df.to_csv(ctm_save_name, index=False, header=None, sep=' ')
 
     tokens_as_list = ctm_df["token"].tolist()
-    tokens_as_string = filename + " " + " ".join(tokens_as_list) + "\n"
+    tokens_as_string = " ".join(tokens_as_list) + "\n"
 
     textfile_save_name = os.path.join(dirname, (filename + ".txt"))
     with open(textfile_save_name, "w", encoding="utf-8") as textfile:
