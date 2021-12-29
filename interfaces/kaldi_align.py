@@ -100,9 +100,8 @@ def check_files(wavpath, txtpath):
 
 
 def load_container_parameters(container_argument):
-
     interface_code_directory = os.path.dirname(os.path.abspath(__file__))
-    config_file_path = os.path.join("config.yaml", interface_code_directory)
+    config_file_path = os.path.join(interface_code_directory, "config.yaml")
     with open(config_file_path) as config_file:
         # use safe_load instead load
         align_parameters = yaml.safe_load(config_file)
