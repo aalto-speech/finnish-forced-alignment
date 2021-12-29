@@ -9,10 +9,6 @@ import wave
 import subprocess
 import yaml
 
-from kaldi_align_conf import container_name, singularity_wrapper
-
-config_file = "config.yaml"
-
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Write individual .txt files from kaldi text file')
@@ -103,14 +99,28 @@ def check_files(wavpath, txtpath):
             sys.exit()
 
 
-def load_parameters():
+def load_container_parameters(container_argument):
+
+    interface_code_directory = os.path.dirname(os.path.abspath(__file__))
+    config_file_path = os.path.join("config.yaml", interface_code_directory)
+    with open(config_file_path) as config_file:
+        # use safe_load instead load
+        align_parameters = yaml.safe_load(config_file)
+        container_name = align_parameters["align_container_name"]
+        singularity_wrapper = align_parameters["singularity_wrapper"]
+
+    if container_argument:  # isfile cannot handle None
+        if os.path.isfile(container_argument):
+            container_name = container_argument
+        else:
+            sys.exit("The path to container is not a file.")
+
+    return container_name, singularity_wrapper
+
 
 def main(arguments):
 
-    if arguments.container:
-        container_name = arguments.container
-    else:
-
+    container_name, singularity_wrapper = load_container_parameters(arguments.container)
 
     wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
     txt_path_for_container = "/opt/kaldi/egs/src_for_txt/"
