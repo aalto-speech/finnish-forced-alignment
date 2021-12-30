@@ -17,7 +17,7 @@ def parse_arguments():
                         help='The created ctm, which are evaluated')
     parser.add_argument('splitted', type=str,
                         help='The location for the silence splitted ctm.')
-    parser.add_argument('--split_type', type=str, default='middle', choices=('middle', 'start', 'end'),
+    parser.add_argument('--split_type', type=str, default='none', choices=('middle', 'start', 'end', 'none'),
                         help='Will the silence be split in the middle, start or end')
     parser.add_argument('--pause_duration', type=float, default=0.5,
                         help='Max silence duration that will be split. After this considered between sentences.')
@@ -62,7 +62,10 @@ def split_silence(created_df, split_type, pause_duration):
 
 def main(gold_ctms_file, created_ctms_file, splitted_ctms_file, split_type, pause_duration):
     _, created_ctm_df = create_ctm_dfs(gold_ctms_file, created_ctms_file)
-    splitted_df = split_silence(created_ctm_df, split_type, pause_duration)
+    if arguments.split_type == 'none':
+        splitted_df = created_ctm_df
+    else:
+        splitted_df = split_silence(created_ctm_df, split_type, pause_duration)
 
     splitted_df[["Filename", "segment", "start", "duration", "token"]].to_csv(splitted_ctms_file, index=False, header=None, sep=' ')
 
