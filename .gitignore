@@ -4,3 +4,4 @@ analysis/__pycache__/*
 tests/__pycache__/*
 tmp/*
 .idea
+.ipynb_checkpoints
