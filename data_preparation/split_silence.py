@@ -66,8 +66,8 @@ def main(gold_ctms_file, created_ctms_file, splitted_ctms_file, split_type, paus
         splitted_df = created_ctm_df
     else:
         splitted_df = split_silence(created_ctm_df, split_type, pause_duration)
-
-    splitted_df[["Filename", "segment", "start", "duration", "token"]].to_csv(splitted_ctms_file, index=False, header=None, sep=' ')
+    splitted_df[["Filename", "segment", "start", "duration", "token"]].to_csv(splitted_ctms_file, index=False,
+                                                                                  header=None, sep=' ')
 
 
 if __name__ == '__main__':
