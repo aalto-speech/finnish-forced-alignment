@@ -2,10 +2,12 @@
 # coding: utf-8
 
 # Imports
+from collections import defaultdict
 import pandas as pd
 from analysis import wer # breaks if run as a script and not -m
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.collections import PatchCollection
 import argparse
 from scipy.stats import percentileofscore
 
@@ -103,6 +105,7 @@ def calculate_frame_wise_comparison(gold_ctms_df, created_ctms_df):
 
 def calculate_ctm_mistakes(gold_ctms_df, created_ctms_df):
     ctm_mistakes_seconds = []
+    grapheme_vs_grapheme_mistakes = defaultdict(list)
     list_of_filenames = gold_ctms_df["Filename"].unique().tolist()
     for filename in list_of_filenames:
 
@@ -119,9 +122,14 @@ def calculate_ctm_mistakes(gold_ctms_df, created_ctms_df):
         created_iterator = df_current_created_ctm.itertuples()
         number_of_dels = 0
         number_of_ins = 0
+        first_gold_token = "<"
+        first_end_difference = np.nan
+        previous_gold_token = first_gold_token
+        previous_end_difference = first_end_difference
+        last_gold_token = ">"
+        last_pause = np.nan
         for comparison_row in token_comparisons[1:]:
             if comparison_row[0] == "OK" or comparison_row[0] == "SUB":
-
                 gold_ctm_row = next(gold_iterator)
                 created_ctm_row = next(created_iterator)
 
@@ -133,6 +141,14 @@ def calculate_ctm_mistakes(gold_ctms_df, created_ctms_df):
                 end_difference = created_ctm_row.end - gold_ctm_row.end
                 ctm_mistakes_seconds.append([start_difference, end_difference])
 
+                # TODO I don't think start end work here.
+                grapheme_pair = previous_gold_token[-1] + gold_ctm_row.token[0]
+                grapheme_vs_grapheme_mistakes[grapheme_pair].append(start_difference)
+                grapheme_vs_grapheme_mistakes[grapheme_pair].append(previous_end_difference)
+
+                previous_gold_token = gold_ctm_row.token
+                previous_end_difference = end_difference
+
             elif comparison_row[0] == "INS":
                 created_ctm_row = next(created_iterator)
                 number_of_ins += 1
@@ -142,8 +158,11 @@ def calculate_ctm_mistakes(gold_ctms_df, created_ctms_df):
             else:
                 print("Something went terribly wrong")
                 break
+        grapheme_pair = previous_gold_token[-1] + last_gold_token[0]
+        grapheme_vs_grapheme_mistakes[grapheme_pair].append(previous_end_difference)
+
         print("for {} the number of dels was {} and ins {}".format(filename, number_of_dels, number_of_ins))
-    return ctm_mistakes_seconds
+    return ctm_mistakes_seconds, grapheme_vs_grapheme_mistakes
 
 
 def draw_histogram(data, xlabel, ylabel, title, xlim, name_of_histogram):
@@ -165,6 +184,39 @@ def draw_whiskers_plot(frame_wise_data, name_of_whiskers_plot):
     ax1.boxplot(frame_wise_data[0])
     ax2.boxplot(frame_wise_data[1])
     ax3.boxplot(frame_wise_data[2])
+    plt.savefig(name_of_whiskers_plot, bbox_inches='tight')
+    plt.clf()
+
+
+def draw_heatmap(alphabets, grapheme_pair_mistake_seconds, name_of_heatmap):
+    N = 10
+    M = 11
+    ylabels = [alphabets]
+    xlabels = [alphabets]
+
+    x, y = np.meshgrid(np.arange(M), np.arange(N))
+    s = np.zeros((len(alphabets), len(alphabets)), dtype=int)
+    c = np.zeros((len(alphabets), len(alphabets)), dtype=float)
+    for i in alphabets:
+        for j in alphabets:
+            s[i, j] = len(grapheme_pair_mistake_seconds[i + j])
+            c = grapheme_pair_mistake_seconds[i + j]
+
+    fig, ax = plt.subplots()
+
+    R = s/s.max()/2
+    circles = [plt.Circle((j,i), radius=r) for r, j, i in zip(R.flat, x.flat, y.flat)]
+    col = PatchCollection(circles, array=c.flatten(), cmap="RdYlGn")
+    ax.add_collection(col)
+
+    ax.set(xticks=np.arange(M), yticks=np.arange(N),
+           xticklabels=xlabels, yticklabels=ylabels)
+    ax.set_xticks(np.arange(M+1)-0.5, minor=True)
+    ax.set_yticks(np.arange(N+1)-0.5, minor=True)
+    ax.grid(which='minor')
+
+    fig.colorbar(col)
+    plt.show()
     plt.savefig(name_of_whiskers_plot, bbox_inches='tight')
     plt.clf()
 
@@ -211,7 +263,7 @@ def calculate_time_from_ctms(gold_ctms_df, created_ctms_df):
 def main(gold_ctms_file, created_ctms_file, name):
     gold_ctm_df, created_ctm_df = create_ctm_dfs(gold_ctms_file, created_ctms_file)
     frame_wise_comparisons = calculate_frame_wise_comparison(gold_ctm_df, created_ctm_df)
-    ctm_mistakes_seconds = calculate_ctm_mistakes(gold_ctm_df, created_ctm_df)
+    ctm_mistakes_seconds, grapheme_pair_mistakes_seconds = calculate_ctm_mistakes(gold_ctm_df, created_ctm_df)
 
     name_of_whiskers_plot = name + "_whiskers_plot.png"
     draw_whiskers_plot(frame_wise_comparisons, name_of_whiskers_plot)
