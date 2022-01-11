@@ -127,7 +127,6 @@ def calculate_ctm_mistakes(gold_ctms_df, created_ctms_df):
         previous_gold_token = first_gold_token
         previous_end_difference = first_end_difference
         last_gold_token = ">"
-        last_pause = np.nan
         for comparison_row in token_comparisons[1:]:
             if comparison_row[0] == "OK" or comparison_row[0] == "SUB":
                 gold_ctm_row = next(gold_iterator)
@@ -189,18 +188,23 @@ def draw_whiskers_plot(frame_wise_data, name_of_whiskers_plot):
 
 
 def draw_heatmap(alphabets, grapheme_pair_mistake_seconds, name_of_heatmap):
-    N = 10
-    M = 11
-    ylabels = [alphabets]
-    xlabels = [alphabets]
+    labels = ["<s>"] + list(alphabets) + ["</s>"]
+    graphemes = ["<"] + list(alphabets) + [">"]
+    N = len(labels)
+    M = len(labels)
 
     x, y = np.meshgrid(np.arange(M), np.arange(N))
-    s = np.zeros((len(alphabets), len(alphabets)), dtype=int)
-    c = np.zeros((len(alphabets), len(alphabets)), dtype=float)
-    for i in alphabets:
-        for j in alphabets:
-            s[i, j] = len(grapheme_pair_mistake_seconds[i + j])
-            c = grapheme_pair_mistake_seconds[i + j]
+    s = np.zeros((N, M), dtype=int)
+    c = np.zeros((N, M), dtype=float)
+    for i in range(N):
+        for j in range(M):
+            mistake_list = np.asarray(grapheme_pair_mistake_seconds[graphemes[i] + graphemes[j]])
+            mistakes_no_nans = mistake_list[~np.isnan(mistake_list)]
+            s[i, j] = len(mistakes_no_nans)
+            if s[i, j]:
+                c[i, j] = np.median(np.abs(mistakes_no_nans))
+            else:
+                c[i, j] = 0
 
     fig, ax = plt.subplots()
 
@@ -210,14 +214,13 @@ def draw_heatmap(alphabets, grapheme_pair_mistake_seconds, name_of_heatmap):
     ax.add_collection(col)
 
     ax.set(xticks=np.arange(M), yticks=np.arange(N),
-           xticklabels=xlabels, yticklabels=ylabels)
+           xticklabels=labels, yticklabels=labels)
     ax.set_xticks(np.arange(M+1)-0.5, minor=True)
     ax.set_yticks(np.arange(N+1)-0.5, minor=True)
     ax.grid(which='minor')
 
     fig.colorbar(col)
-    plt.show()
-    plt.savefig(name_of_whiskers_plot, bbox_inches='tight')
+    plt.savefig(name_of_heatmap, bbox_inches='tight')
     plt.clf()
 
 
@@ -267,6 +270,14 @@ def main(gold_ctms_file, created_ctms_file, name):
 
     name_of_whiskers_plot = name + "_whiskers_plot.png"
     draw_whiskers_plot(frame_wise_comparisons, name_of_whiskers_plot)
+
+    tokens = gold_ctm_df["token"].tolist()
+    # This might be a memory issue but haven't found anything conclusive.
+    tokens_string = " ".join(tokens)
+    alphabets = "".join(sorted(set(tokens_string)))
+    alphabets = alphabets.replace(" ", "")
+    name_of_heatmap = name + "_heatmap.png"
+    draw_heatmap(alphabets, grapheme_pair_mistakes_seconds, name_of_heatmap)
 
     nparray_ctm_mistakes_seconds = np.asarray(ctm_mistakes_seconds)
     name_of_histogram_start = name + "_histogram_start.png"
