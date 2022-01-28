@@ -6,7 +6,8 @@ import argparse
 import os
 import sys
 import subprocess
-from kaldi_rec_conf import container_name, singularity_wrapper
+import yaml
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Kaldi ASR')
@@ -20,12 +21,34 @@ def parse_arguments():
                         help='Insert this flag if you want eaf file as an output')
     parser.add_argument('--txt', action='store_true',
                         help='Insert this flag if you want txt file as an output')
+    parser.add_argument('--container', type=str,
+                        help='The Kaldi-rec singularity container used for transcribing speech.')
     args = parser.parse_args()
 
     return args
 
 
+#  Copy-pasted from kaldi_align.py but maybe better here than loaded from there?
+def load_container_parameters(container_argument):
+    interface_code_directory = os.path.dirname(os.path.abspath(__file__))
+    config_file_path = os.path.join(interface_code_directory, "config.yaml")
+    with open(config_file_path) as config_file:
+        # use safe_load instead load
+        rec_parameters = yaml.safe_load(config_file)
+        container_name = rec_parameters["rec_container_name"]
+        singularity_wrapper = rec_parameters["singularity_wrapper"]
+
+    if container_argument:  # isfile cannot handle None
+        if os.path.isfile(container_argument):
+            container_name = container_argument
+        else:
+            sys.exit("The path to container is not a file.")
+
+    return container_name, singularity_wrapper
+
+
 def main(arguments):
+    container_name, singularity_wrapper = load_container_parameters(arguments.container)
     wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
     target_path_for_container = "/opt/kaldi/egs/temp/"
 

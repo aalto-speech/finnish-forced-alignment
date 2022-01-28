@@ -1,0 +1,30 @@
+FROM kaldiasr/kaldi@sha256:4b5153e87f8ec61ef96bcf1751ba97e9e39b05aedf24bea37886a54944fb44ef
+
+RUN apt-get update && apt-get install -y \
+  python3-pip
+
+ENV LANG en_US.UTF-8
+
+RUN pip3 install pandas pympi-ling 
+
+WORKDIR /opt/kaldi/egs/align
+
+# Creating Kaldi file structure
+RUN mkdir -p data/align data/src exp/nnet3/chain exp/nnet3/extractor conf
+
+COPY exp/nnet3/tdnn7q_sp exp/nnet3/chain
+
+COPY exp/nnet3/extractor exp/nnet3/extractor
+
+COPY conf/mfcc_hires.conf conf/mfcc_hires.conf
+
+# Loading the helper scripts
+RUN git clone https://github.com/juholeinonen/aligning_with_Docker.git
+WORKDIR aligning_with_Docker
+RUN git reset --hard 4e4c5d1
+WORKDIR /opt/kaldi/egs/align
+
+COPY phone-converse-finnish.csv aligning_with_Docker/bin
+COPY align.sh aligning_with_Docker/bin
+
+ENTRYPOINT ["/opt/kaldi/egs/align/aligning_with_Docker/bin/align.sh"]

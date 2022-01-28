@@ -37,8 +37,8 @@ def create_ctm_from_textgrid(textgrid_file, directory=None):
     else:
         target_directory = directory
 
-    ctm_name = pathlib.Path(target_directory, "CTM", textgrid_id).with_suffix(".ctm")
-    text_name = pathlib.Path(target_directory, "TXT", textgrid_id).with_suffix('.txt')
+    ctm_name = pathlib.Path(target_directory, "ctm", textgrid_id).with_suffix(".ctm")
+    text_name = pathlib.Path(target_directory, "txt", textgrid_id).with_suffix('.txt')
     ctm_name.parent.mkdir(parents=True, exist_ok=True) # same behavior as the POSIX mkdir -p command
     text_name.parent.mkdir(parents=True, exist_ok=True) # same behavior as the POSIX mkdir -p command
 
@@ -50,7 +50,8 @@ def create_ctm_from_textgrid(textgrid_file, directory=None):
                 for interval in tier.intervals:
                     interval_strings.append(interval[2])
                 utterance_text = clean_text(" ".join(interval_strings))
-                text_file.write(textgrid_id + " " + utterance_text + "\n")
+                #text_file.write(textgrid_id + " " + utterance_text + "\n")
+                text_file.write(utterance_text + "\n")
             elif tier.name == "word":
                 for word in tier.intervals:
                     if len(word[2]) > 0:

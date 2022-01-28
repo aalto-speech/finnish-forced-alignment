@@ -12,7 +12,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Write Elan produced tab aligned files into Kaldi ctms')
     parser.add_argument('name', type=str,
                         help='Path/Name of the tab file')
-    parser.add_argument('apply_re', type=str,
+    parser.add_argument('--re', action='store_true',
                         help='Whether to apply regular expressions on word tokens')
     args = parser.parse_args()
     return args
@@ -34,17 +34,20 @@ def create_ctm_and_text(tab_aligned_file, apply_re):
 
     ctm_df = tab_aligned_df[["filename", "segment", "start", "duration", "token"]]
     ctm_df = ctm_df.sort_values(by=["start"])
+
+    ctm_df["token"] = ctm_df["token"].fillna("2'34'45'78'2")
     if apply_re:
         ctm_df["token"] = [re.sub(r'\([^)]*\)', '', str(x)) for x in ctm_df["token"]]
         ctm_df["token"] = ctm_df["token"].str.lower()
-        ctm_df["token"] = [re.sub(r"[^\w ']", " ", str(x), flags=re.UNICODE) for x in ctm_df["token"]]
+        ctm_df["token"] = [re.sub(r"[^\w ']", "", str(x), flags=re.UNICODE) for x in ctm_df["token"]]
         ctm_df["token"] = [re.sub(' +', ' ', str(x)) for x in ctm_df["token"]]
         ctm_df["token"] = ctm_df["token"].str.strip()
+    ctm_df["token"] = ctm_df["token"].str.replace("2'34'45'78'2", '<UNK>')
     ctm_save_name = os.path.join(dirname, (filename + ".csv"))
     ctm_df.to_csv(ctm_save_name, index=False, header=None, sep=' ')
 
     tokens_as_list = ctm_df["token"].tolist()
-    tokens_as_string = filename + " " + " ".join(tokens_as_list) + "\n"
+    tokens_as_string = " ".join(tokens_as_list) + "\n"
 
     textfile_save_name = os.path.join(dirname, (filename + ".txt"))
     with open(textfile_save_name, "w", encoding="utf-8") as textfile:
@@ -57,4 +60,4 @@ def main(tab_aligned_file, apply_re):
 
 if __name__ == '__main__':
     arguments = parse_arguments()
-    main(arguments.name, arguments.apply_re)
+    main(arguments.name, arguments.re)

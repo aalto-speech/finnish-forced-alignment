@@ -7,7 +7,7 @@ import os
 import sys
 import wave
 import subprocess
-from kaldi_align_conf import container_name, singularity_wrapper
+import yaml
 
 
 def parse_arguments():
@@ -26,8 +26,10 @@ def parse_arguments():
     #                     help='Path/Name of the created eaf file')
     # parser.add_argument('--textgrid', type=str,
     #                     help='Path/Name of the textgrid file')
-    parser.add_argument('--lang', type=str, default='fi', choices=('fi', 'en', 'se', 'et', 'kv'),
+    parser.add_argument('--lang', type=str, default='fi', choices=('fi', 'fi-conv', 'en', 'se', 'et', 'kv'),
                         help='Target language')
+    parser.add_argument('--container', type=str,
+                        help='The Kaldi-align singularity container used for aligning speech.')
     parser.add_argument('--debug', action='store_true',
                         help='Run script in debug mode meaning certain files are not deleted afterwards')
     args = parser.parse_args()
@@ -97,14 +99,36 @@ def check_files(wavpath, txtpath):
             sys.exit()
 
 
+def load_container_parameters(container_argument):
+    interface_code_directory = os.path.dirname(os.path.abspath(__file__))
+    config_file_path = os.path.join(interface_code_directory, "config.yaml")
+    with open(config_file_path) as config_file:
+        # use safe_load instead load
+        align_parameters = yaml.safe_load(config_file)
+        container_name = align_parameters["align_container_name"]
+        singularity_wrapper = align_parameters["singularity_wrapper"]
+
+    if container_argument:  # isfile cannot handle None
+        if os.path.isfile(container_argument):
+            container_name = container_argument
+        else:
+            sys.exit("The path to container is not a file.")
+
+    return container_name, singularity_wrapper
+
+
 def main(arguments):
+
+    container_name, singularity_wrapper = load_container_parameters(arguments.container)
 
     wav_path_for_container = "/opt/kaldi/egs/src_for_wav/"
     txt_path_for_container = "/opt/kaldi/egs/src_for_txt/"
     target_path_for_container = "/opt/kaldi/egs/kohdistus/"
 
     csv_file = "phone-finnish-finnish.csv"
-    if arguments.lang == 'en':
+    if arguments.lang == 'fi-conv':
+        csv_file = "phone-converse-finnish.csv"
+    elif arguments.lang == 'en':
         csv_file = "phone-english-finnish.csv"
     elif arguments.lang == 'se':
         csv_file = "phone-sami-finnish.csv"
