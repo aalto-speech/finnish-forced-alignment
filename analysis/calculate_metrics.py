@@ -190,33 +190,46 @@ def draw_whiskers_plot(frame_wise_data, name_of_whiskers_plot):
 def draw_heatmap(alphabets, grapheme_pair_mistake_seconds, name_of_heatmap):
     labels = ["<s>"] + list(alphabets) + ["</s>"]
     graphemes = ["<"] + list(alphabets) + [">"]
-    N = len(labels)
-    M = len(labels)
+    Y = len(labels)
+    X = len(labels)
 
-    x, y = np.meshgrid(np.arange(M), np.arange(N))
-    s = np.zeros((N, M), dtype=int)
-    c = np.zeros((N, M), dtype=float)
-    for i in range(N):
-        for j in range(M):
-            mistake_list = np.asarray(grapheme_pair_mistake_seconds[graphemes[i] + graphemes[j]])
+    x, y = np.meshgrid(np.arange(X), np.arange(Y))
+    s = np.zeros((Y, X), dtype=int)
+    c = np.zeros((Y, X), dtype=float)
+
+    all_mistakes = np.asarray(sum(grapheme_pair_mistake_seconds.values(), []))
+    all_mistakes_no_nans = all_mistakes[~np.isnan(all_mistakes)]
+    all_mistakes_mean = np.mean(all_mistakes_no_nans)
+    all_mistakes_std = np.std(all_mistakes_no_nans)
+
+    def reject_outliers(data, mean, std, m=2):
+        return data[abs(data - mean) < m * std]
+
+    for m in range(Y):
+        for n in range(X):
+            mistake_list = np.asarray(grapheme_pair_mistake_seconds[graphemes[m] + graphemes[n]])
             mistakes_no_nans = mistake_list[~np.isnan(mistake_list)]
-            s[i, j] = len(mistakes_no_nans)
-            if s[i, j]:
-                c[i, j] = np.median(np.abs(mistakes_no_nans))
+            mistakes_no_nans_no_outliers_m2 = reject_outliers(mistakes_no_nans, all_mistakes_mean, all_mistakes_std)
+            s[m, n] = len(mistakes_no_nans_no_outliers_m2)
+            if s[m, n]:
+                c[m, n] = np.median(np.abs(mistakes_no_nans_no_outliers_m2))
             else:
-                c[i, j] = 0
+                c[m, n] = 0
+        sum_of_starts_with = sum(s[m, :])
+        if sum_of_starts_with:
+            s[m, :] = (s[m, :]/sum_of_starts_with)*100
 
     fig, ax = plt.subplots()
 
     R = s/s.max()/2
     circles = [plt.Circle((j,i), radius=r) for r, j, i in zip(R.flat, x.flat, y.flat)]
-    col = PatchCollection(circles, array=c.flatten(), cmap="RdYlGn")
+    col = PatchCollection(circles, array=c.flatten(), cmap="RdYlGn_r")  # cmap=plt.cm.Blues)
     ax.add_collection(col)
 
-    ax.set(xticks=np.arange(M), yticks=np.arange(N),
+    ax.set(xticks=np.arange(X), yticks=np.arange(Y),
            xticklabels=labels, yticklabels=labels)
-    ax.set_xticks(np.arange(M+1)-0.5, minor=True)
-    ax.set_yticks(np.arange(N+1)-0.5, minor=True)
+    ax.set_xticks(np.arange(X+1)-0.5, minor=True)
+    ax.set_yticks(np.arange(Y+1)-0.5, minor=True)
     ax.grid(which='minor')
 
     fig.colorbar(col)
