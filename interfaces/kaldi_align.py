@@ -20,6 +20,8 @@ def parse_arguments():
                         help='Path/Name of the audio file or directory')
     parser.add_argument('--txt', type=str,
                         help='Path/Name of the text file or directory')
+    parser.add_argument('--segments', type=str,
+                        help='Path/Name of the segments directory. WARNING! This option assumes you know what you are doing.')
     # parser.add_argument('--ctm', type=str,
     #                     help='Path/Name of the created ctm file')
     # parser.add_argument('--eaf', type=str,
@@ -148,6 +150,13 @@ def main(arguments):
         check_framerate(wav_directory)
         check_files(wav_directory, txt_directory)
         textDirBoolean = "textDirFalse"
+    elif arguments.segments:
+        wav_directory = arguments.wav
+        txt_directory = arguments.wav
+        check_framerate(wav_directory)
+        if os.path.isfile(arguments.wav):
+            wav_directory, align_file_name = os.path.split(arguments.wav)
+        textDirBoolean = "kaldiDirTrue"
     else:  # arguments.wav
         wav_directory = arguments.wav
         txt_directory = arguments.txt
