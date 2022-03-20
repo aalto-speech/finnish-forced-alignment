@@ -152,7 +152,7 @@ def main(arguments):
         textDirBoolean = "textDirFalse"
     elif arguments.segments:
         wav_directory = arguments.wav
-        txt_directory = arguments.wav
+        txt_directory = arguments.segments
         check_framerate(wav_directory)
         if os.path.isfile(arguments.wav):
             wav_directory, align_file_name = os.path.split(arguments.wav)

@@ -73,6 +73,7 @@ then
 elif [ "$extraDirType" = "kaldiDirTrue" ]
 then
   python3 $bin_folder/make_wav_and_utt2spk.py "$project_dir" "$src_for_wav"
+  python3 $bin_folder/wav2reco.py "$project_dir"/data/align/wav.scp "$project_dir"/data/align/reco2file_and_channel
   cp "$src_for_txt"/text "$project_dir"/data/align
   cp "$src_for_txt"/segments "$project_dir"/data/align
   awk '{print $1, $1}' "$project_dir"/data/align/segments > "$project_dir"/data/align/utt2spk

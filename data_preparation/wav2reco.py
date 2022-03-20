@@ -15,9 +15,8 @@ def parse_arguments():
 
 
 def make_reco(wavpath, recopath):
-    with open(wavpath, "r", encoding="utf-8") as wavlist_file,\
-        open(recopath, "w", encoding="utf-8") as reco_file:
-
+    with open(wavpath, "r", encoding="utf-8") as wavlist_file, \
+            open(recopath, "w", encoding="utf-8") as reco_file:
         for wav in wavlist_file:
             recording_id, recording_path = wav.split(" ")
             filename = os.path.splitext(os.path.split(recording_path)[1])[0]
@@ -25,11 +24,7 @@ def make_reco(wavpath, recopath):
 
 
 def main(arguments):
-    make_wav(arguments.wavpath, arguments.tgtpath)
-    if arguments.txtpath:
-        make_txt(arguments.txtpath, arguments.tgtpath)
-    else:
-        make_txt(arguments.wavpath, arguments.tgtpath)
+    make_reco(arguments.wavpath, arguments.recopath)
 
 
 if __name__ == '__main__':

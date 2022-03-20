@@ -5,5 +5,6 @@ ENV LANG en_US.UTF-8
 WORKDIR /opt/kaldi/egs/align
 
 COPY pipelines/align_kaldi_dir.sh aligning_with_Docker/bin
+COPY data_preparation/wav2reco.py aligning_with_Docker/bin
 
 ENTRYPOINT ["/opt/kaldi/egs/align/aligning_with_Docker/bin/align_kaldi_dir.sh"]

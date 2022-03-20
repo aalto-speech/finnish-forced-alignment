@@ -4,6 +4,7 @@
 # Imports
 import argparse
 import os
+import pathlib
 
 
 def parse_arguments():
