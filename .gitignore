@@ -1,7 +1,8 @@
 data_preparation/__pycache__/*
-__pycache__/*
+__pycache__
 analysis/__pycache__/*
 tests/__pycache__/*
 tmp/*
 .idea
 .ipynb_checkpoints
+*.egg-info

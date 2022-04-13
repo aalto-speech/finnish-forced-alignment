@@ -79,7 +79,7 @@ def Aalto_speaker_segment_audio(SOX_PATH,srate,infile):
     #Remove temp files
     os.remove(diarization_filename)
     os.system("rm -rf "+temp_diarization_dir+"/*")
-    os.system("rmdir "+temp_diarization_dir)      
+    os.system("rmdir "+temp_diarization_dir)
     return audiofiles
 
 def LIUM_speaker_segment_audio(SOX_PATH,srate,infile):
@@ -103,9 +103,9 @@ def LIUM_speaker_segment_audio(SOX_PATH,srate,infile):
             audiofiles.append({ 'start': start_seconds, 'file': seg_filename , 'speaker':speaker_id})
             seg_index += 1
     diarization_file.close()
-    os.remove(diarization_filename)      
+    os.remove(diarization_filename)
     return audiofiles
-    
+
 
 def split_audio(SOX_PATH,srate,infile):
     """Split an input audio file to approximately seglen-second segments,
@@ -169,7 +169,7 @@ def split_audio(SOX_PATH,srate,infile):
     for i, (start, end) in enumerate(segments):
         starts = start*framesize
         lens = (end-start)*framesize
-  
+
         start_seconds = float(1.0*starts/srate)
         dur_seconds = float(1.0*lens/srate)
 
@@ -194,7 +194,7 @@ def audio_file_len(audio_filename):
     for i in range(4):
         byteRate=byteRate + ord(a[i])*pow(256,i)
     #get the file size in bytes
-    fileSize=os.path.getsize(filename)  
+    fileSize=os.path.getsize(filename)
     #the duration of the data, in milliseconds, is given by
     if (byteRate+ms) > 0:
         try:
@@ -237,14 +237,14 @@ def create_data_folder(target_wav_filename,seg_filenames):
         file_id = get_file_id(audio_filename)
         wav_scp_file.write(file_id+" "+audio_filename+"\n")
     wav_scp_file.close()
-    
+
     #wav-list
     wav_list_filename = kaldi_data_dir+"/wav-list"
     wav_list_file = open(wav_list_filename,"w")
     for audio_filename in audio_filenames:
         wav_list_file.write(audio_filename+"\n")
     wav_list_file.close()
-    
+
     #verbatim.ref
     transcript = "NULL"
     verbatim_filename = kaldi_data_dir+"/verbatim.ref"
@@ -258,7 +258,7 @@ def create_data_folder(target_wav_filename,seg_filenames):
     verbatim_file.close()
     text_filename = verbatim_filename.replace("verbatim.ref","text")
     os.system("cp "+verbatim_filename+" "+text_filename)
-    
+
     #spk2utt
     spk2utt = dict()
     for seg in seg_filenames:
@@ -277,7 +277,7 @@ def create_data_folder(target_wav_filename,seg_filenames):
     for speaker,utt in spk2utt.iteritems():
         spk2utt_file.write(speaker+" "+utt.strip()+"\n")
     spk2utt_file.close()
-    
+
     #utt2spk
     utt2spk_filename = kaldi_data_dir+"/utt2spk"
     utt2spk_file = open(utt2spk_filename,"w")
@@ -291,14 +291,14 @@ def create_data_folder(target_wav_filename,seg_filenames):
         file_id = get_file_id(audio_filename)
         utt2spk_file.write(file_id+" "+speaker+"\n")
     utt2spk_file.close()
-    
+
     #plain.txt
     plain_filename = kaldi_data_dir+"/plain.txt"
     plain_file = open(plain_filename,"w")
     for line in audio_filenames:
         plain_file.write(transcript+"\n")
     plain_file.close()
-    
+
     return kaldi_data_dir
 
 def remove_temp_files(target_wav_filename,seg_filenames,data_folder):
@@ -401,13 +401,13 @@ def write_elan(media_file,rfile,outf):
             speakers.append(speaker_utf8.strip())
             if speaker_utf8.strip() == "Puhuja":
                 speaker_utf8 = speakers[len(speakers)-3]
-                tier_id = speaker_utf8.strip()+" "+str(seg_count)    
-                #tier_id = speaker_utf8.strip()  
+                tier_id = speaker_utf8.strip()+" "+str(seg_count)
+                #tier_id = speaker_utf8.strip()
             #tier = etree.SubElement(doc, 'TIER',attrib={'DEFAULT_LOCALE': 'fi','LINGUISTIC_TYPE_REF': 'default-lt','TIER_ID': unicode(tier_id),'PARTICIPANT':unicode(speaker_utf8)})
             tier = etree.SubElement(doc, 'TIER',attrib={'DEFAULT_LOCALE': 'fi','LINGUISTIC_TYPE_REF': 'default-lt','TIER_ID': tier_id,'PARTICIPANT':speaker_utf8})
             current_speaker = speaker_id
             seg_count += 1
-             		            
+
         a = etree.SubElement(tier, 'ANNOTATION')
         aa = etree.SubElement(a, 'ALIGNABLE_ANNOTATION',
                          attrib={'ANNOTATION_ID': 'a' + str(an_count),
@@ -443,7 +443,7 @@ def get_unformatted_string(formatted_subtitle_string):
                 unformatted_subtitle_string += text_string
     else:
         unformatted_subtitle_string = formatted_subtitle_string
-    
+
     return unformatted_subtitle_string
 
 def write_srt(asr_segmentations,srt_filename):
@@ -454,15 +454,15 @@ def write_srt(asr_segmentations,srt_filename):
         end = str(seg[1])
         token = str(seg[2])
         speaker_id = str(seg[3])
-        out_seg = start+"\t"+end+"\t"+token+"\t"+speaker_id       
+        out_seg = start+"\t"+end+"\t"+token+"\t"+speaker_id
         if len(token.strip()) > 0:
             word_segs.append(out_seg)
-    
+
     word_segs_filtered = []
     index = 0
     prev_word = ""
     for line in word_segs:
-        try: 
+        try:
             next_line = word_segs[index+1]
             next_start,next_end,next_word,next_speaker = next_line.split("\t")
         except:
@@ -476,12 +476,12 @@ def write_srt(asr_segmentations,srt_filename):
             if prev_word == ".":
                 pass
             else:
-                word_segs_filtered.append(line) 
+                word_segs_filtered.append(line)
         else:
-            word_segs_filtered.append(line) 
+            word_segs_filtered.append(line)
         prev_word = word
-        index += 1    
-        
+        index += 1
+
     index = 0
     subtitle = ""
     insert_index = 1
@@ -517,7 +517,7 @@ def write_srt(asr_segmentations,srt_filename):
                         subtitle = ""
                     else:
                         subtitle = subtitle.strip()+word+"\n"
-                else:    
+                else:
                     if "\n" in subtitle:
                         first_row,second_row = subtitle.split("\n",1)
                         unformatted_row = get_unformatted_string(second_row)+" "+get_unformatted_string(word)
@@ -528,7 +528,7 @@ def write_srt(asr_segmentations,srt_filename):
                             sentence_start_time = start.strip()
                             insert_index += 1
                             subtitle = alternating_sub_colors[0]+word+" "
-                        else: 
+                        else:
                             subtitle += word+" "
                     else:
                         unformatted_row = get_unformatted_string(subtitle)+" "+get_unformatted_string(word)
@@ -564,7 +564,7 @@ def conv_second_value(value):
     string_value = str(value)
     string_value = string_value.replace(".",",")
     return string_value
-        
+
 
 def format_subtitle(insert_index,text,start_time,end_time):
     start_H = int((start_time)/(3600.0))
@@ -576,7 +576,7 @@ def format_subtitle(insert_index,text,start_time,end_time):
     end_S = float((float((end_time)/(60.0))-int((end_time)/(60.0)))*60)
     end_S = "%.3f" % end_S
     time_string = conv_time_value(start_H)+":"+conv_time_value(start_M)+":"+conv_second_value(start_S)+" --> "+conv_time_value(end_H)+":"+conv_time_value(end_M)+":"+conv_second_value(end_S)
-    formatted_string = str(insert_index)+"\n"+time_string+"\n"+text+"\n"        
+    formatted_string = str(insert_index)+"\n"+time_string+"\n"+text+"\n"
     return formatted_string
 
 def first_letter_to_upper(first_word):
@@ -586,7 +586,7 @@ def first_letter_to_upper(first_word):
         first_word = first_word[0].replace("ö","Ö")+first_word[1:]
     else:
         first_word = first_word[0].upper()+first_word[1:]
-    return first_word    
+    return first_word
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -620,9 +620,9 @@ def convert_to_target_wav(SOX_PATH,sample_rate,original_filename,original_cwd):
         video_file_id = p.communicate()[0]
 
         os.system(YOUTUBE_DL_PATH+" --id "+original_filename)
-        
+
         video_file_id = original_cwd+"/"+video_file_id.strip()+".*"
-        
+
         output_video_filename = glob.glob(video_file_id)[0]
 
         #print p.returncode
@@ -635,13 +635,13 @@ def convert_to_target_wav(SOX_PATH,sample_rate,original_filename,original_cwd):
         AVCONV_PATH = SOX_PATH.replace("sox","avconv")
         original_audio_filename = output_video_filename+".wav"
         os.system(AVCONV_PATH+" -i "+output_video_filename+" -vn -f wav -ar 16000 -ac 1 "+original_audio_filename)
-        
+
         #Convert to target audio
         target_wav_filename = original_audio_filename.replace(".wav","_16k.wav")
         os.system(SOX_PATH+" "+original_audio_filename+" -t wav -r "+str(sample_rate)+" -b 16 -e signed-integer -c 1 "+target_wav_filename)
         os.remove(original_audio_filename)
         os.remove(output_video_filename)
-    else: 
+    else:
         #Check if input is video
         if original_filename.endswith(".wav") == False:
             target_wav_filename = target_audio_filename(original_filename)
@@ -650,7 +650,7 @@ def convert_to_target_wav(SOX_PATH,sample_rate,original_filename,original_cwd):
             os.system(AVCONV_PATH+" -i "+original_filename+" -vn -f wav -ar 16000 -ac 1 "+original_audio_filename)
             #Convert audio to target wav
             os.system(SOX_PATH+" "+original_audio_filename+" -t wav -r "+str(sample_rate)+" -b 16 -e signed-integer -c 1 "+target_wav_filename)
-            os.remove(original_audio_filename)           
+            os.remove(original_audio_filename)
         else:
             target_wav_filename = target_audio_filename(original_filename)
             #Convert audio to target wav
@@ -693,7 +693,7 @@ def write_txt(asr_segmentations,txt_filename):
     if len(snt) > 0:
         snt = snt.strip()+"."
         txt_file.write(snt+"\n")
-        snt = ""      
+        snt = ""
     txt_file.close()
 
 def num_of_speakers(segs):
@@ -749,9 +749,9 @@ asr_models = {
 default_args = {
     'model': [m for m, s in asr_models.items() if 'default' in s][0],
     }
-    
 
-def main():    
+
+def main():
     #Read command line parameters
     parser = argparse.ArgumentParser(description='Kaldi ASR')
 
@@ -765,7 +765,7 @@ def main():
     args = vars(parser.parse_args())
 
     original_cwd = os.getcwd()
-   
+
     if args['input'][0].startswith("http") == False:
         wav_filename = os.path.realpath(args['input'][0])
     else:
@@ -784,7 +784,7 @@ def main():
 
     #Convert media file to target wav
     target_wav_filename = convert_to_target_wav(SOX_PATH,srate,wav_filename,original_cwd)
-    
+
     os.chdir(rootdir)
     #Segmentation and diarization
 
@@ -795,15 +795,15 @@ def main():
     else:
         seg_audiofiles = split_audio(SOX_PATH,srate,target_wav_filename)
 
-       
-    
+
+
     #Prepare data folder
     data_folder_path = create_data_folder(target_wav_filename,seg_audiofiles)
     number_of_speakers = num_of_speakers(seg_audiofiles)
 
     #JUHO added symbolic link to model due to decode.sh update
     os.system("ln -s "+AM_MODEL+"/final.mdl "+data_folder_path+"/final.mdl")
-    
+
     #Generate MFCC features and iVectors
     log_path = data_folder_path+"/log"
     mfcc_path = data_folder_path+"/mfccs"
@@ -814,10 +814,10 @@ def main():
     os.system(rootdir+"steps/compute_cmvn_stats.sh "+data_folder_path+" "+log_path+" "+cmvn_path)
     os.system(rootdir+"steps/online/nnet2/extract_ivectors_online.sh --nj "+str(number_of_speakers)+" "+data_folder_path+" "+IVEC_EXTRACTOR+" "+ivectors_dir)
 
-    #Recognize 
+    #Recognize
     decoding_output_path = data_folder_path+"/decode_output"
     os.system(rootdir+"steps/nnet3/decode.sh --nj "+str(number_of_speakers)+" "+decode_params+" "+ivectors_dir+" "+DECODING_GRAPH+" "+data_folder_path+" "+decoding_output_path)
-    
+
     #Print output
     decode_output_filename = decoding_output_path+"/decode.output.txt"
     lattice_scale = "lattice-scale"
@@ -826,20 +826,20 @@ def main():
     lattice_1best = "lattice-1best"
     lattice_align_words = "lattice-align-words"
     nbest_to_ctm = "nbest-to-ctm"
-    
+
     #CTM output
     media_file_id = get_file_id(target_wav_filename)
     ctm_filename = decoding_output_path+"/decode_"+media_file_id+".ctm"
     os.system(lattice_1best+" "+lattice_params+" \"ark:gunzip -c \""+decoding_output_path+"/lat.*.gz\" |\" ark:- | "+lattice_align_words+" "+DECODING_GRAPH+"/phones/word_boundary.int "+AM_MODEL+"/final.mdl ark:- ark:- | "+nbest_to_ctm+"  ark:- "+ctm_filename)
-    
+
     words_filename = DECODING_GRAPH+"/words.txt"
-    
+
     words_dict = dict()
     for line in fileinput.input(words_filename):
         line = line.strip()
         token,token_id = line.split(" ",1)
         words_dict[token_id] = token
-    
+
     trn_dict = dict()
     seg_trns = dict()
     start_refs = dict()
@@ -851,9 +851,9 @@ def main():
         seg_id = get_file_id(seg_filename)
         start_refs[seg_id] = float(start_seconds)
         speaker_refs[seg_id] = speaker_id
-    
-    
-    
+
+
+
     asr_word_segmentations = []
     index = 0
     current_seg_id = ""
@@ -874,8 +874,8 @@ def main():
             old_start_time = prev_segmentation[0]
             old_end_time = prev_segmentation[1]
             old_token = prev_segmentation[2]
-            old_speaker = prev_segmentation[3]  
-            asr_word_segmentations.append((old_end_time,start_time,".",old_speaker))  
+            old_speaker = prev_segmentation[3]
+            asr_word_segmentations.append((old_end_time,start_time,".",old_speaker))
             index += 1
         if token.startswith("+") == False and token.endswith("+") == True:
             sub_word_start = start_time
@@ -884,28 +884,28 @@ def main():
             sub_word += token.replace("+","")
         elif token.startswith("+") == True and token.endswith("+") == False:
             sub_word_end = end_time
-            sub_word += token.replace("+","")            
+            sub_word += token.replace("+","")
             start_time = float(sub_word_start)
-            end_time = float(sub_word_end) 
+            end_time = float(sub_word_end)
             token = str(sub_word)
             asr_word_segmentations.append((start_time,end_time,token,speaker))
             sub_word = ""
             sub_word_start = ""
             sub_word_end = ""
-            index += 1      
+            index += 1
         else:
             asr_word_segmentations.append((start_time,end_time,token,speaker))
             index += 1
-        current_seg_id = seg_id    
+        current_seg_id = seg_id
 
-    
+
     asr_word_segmentations.sort()
 
     os.chdir(original_cwd)
     if args['eaf_filename'] != None:
         asr_word_segmentations_ms = alignment_to_milliseconds(asr_word_segmentations)
         eaf_filename = os.path.realpath(args['eaf_filename'])
-        write_elan(wav_filename,asr_word_segmentations_ms,eaf_filename)  
+        write_elan(wav_filename,asr_word_segmentations_ms,eaf_filename)
     if args['srt_filename'] != None:
         srt_filename = os.path.realpath(args['srt_filename'])
         write_srt(asr_word_segmentations,srt_filename)
