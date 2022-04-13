@@ -1,6 +1,6 @@
 import pytest
-from data_preparation import split_silence
-from analysis import calculate_metrics as c_m
+from finnish_forced_alignment.data_handling import split_silence
+from finnish_forced_alignment.alignment import calculate_metrics as c_m
 
 
 @pytest.fixture

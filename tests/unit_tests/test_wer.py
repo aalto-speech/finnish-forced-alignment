@@ -1,5 +1,5 @@
 import pytest
-from analysis import wer
+from finnish_forced_alignment.alignment import wer
 
 @pytest.mark.parametrize("hypothesis, reference, wer_reference", [
     ("testi on",

@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from analysis import calculate_metrics as c_m
+from finnish_forced_alignment.alignment import calculate_metrics as c_m
 
 
 
